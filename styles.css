@@ -264,63 +264,72 @@ button:active {
   overflow-x: auto;
 }
 
-/* Removed old table styles, replaced with cards below */
-
-/* New: Rates cards container */
-.rates-cards {
+/* Rates cards container */
+#rates-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+  margin-bottom: 64px;
 }
 
 /* Individual rate card */
 .rate-card {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-  padding: 16px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  padding: 20px 16px;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .rate-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
 }
 
-/* Flag icon styling for rate cards */
+/* Flag icon styling */
 .rate-card .flag-icon {
-  width: 48px;
-  height: 36px;
-  border-radius: 4px;
+  width: 56px;
+  height: 40px;
+  border-radius: 6px;
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  margin: 0 auto 12px auto;
-  box-shadow: 0 0 6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
   display: inline-block;
+  margin-bottom: 8px;
 }
 
+/* Currency code styling */
 .rate-card .currency-code {
   font-weight: 700;
-  font-size: 1.25rem;
-  margin-bottom: 6px;
+  font-size: 1.4rem;
   color: var(--blue);
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
 }
 
+/* Currency name styling */
 .rate-card .currency-name {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #64748b;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
+/* Currency rate styling */
 .rate-card .currency-rate {
   font-weight: 600;
   font-size: 1.1rem;
   color: var(--green);
+  user-select: none;
 }
-
 
 /* FAQ Section */
 .faq-section {
@@ -558,5 +567,28 @@ button:active {
   #swap-btn {
     align-self: center;
     margin: 16px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  #rates-container {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .rate-card {
+    padding: 16px 12px;
+  }
+  .rate-card .flag-icon {
+    width: 48px;
+    height: 32px;
+  }
+  .rate-card .currency-code {
+    font-size: 1.2rem;
+  }
+  .rate-card .currency-name {
+    font-size: 0.9rem;
+  }
+  .rate-card .currency-rate {
+    font-size: 1rem;
   }
 }
