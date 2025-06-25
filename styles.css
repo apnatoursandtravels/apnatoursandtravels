@@ -289,12 +289,17 @@ button:active {
   transform: translateY(-4px);
 }
 
+/* Flag icon styling for rate cards */
 .rate-card .flag-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  border-radius: 50%;
-  overflow: hidden;
+  width: 48px;
+  height: 36px;
+  border-radius: 4px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin: 0 auto 12px auto;
   box-shadow: 0 0 6px rgb(0 0 0 / 0.1);
+  display: inline-block;
 }
 
 .rate-card .currency-code {
@@ -315,6 +320,7 @@ button:active {
   font-size: 1.1rem;
   color: var(--green);
 }
+
 
 /* FAQ Section */
 .faq-section {
