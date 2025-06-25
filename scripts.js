@@ -276,7 +276,7 @@ function displayLiveRates(rates) {
     const flagDiv = document.createElement('div');
 
     if (flagCode) {
-      flagDiv.className = `flag-icon flag-icon-${flagCode}`;
+flagDiv.className = `fi fi-${flagCode}`; // instead of flag-icon
     } else {
       flagDiv.textContent = cur; // fallback text if no flag
       flagDiv.style.fontWeight = '700';
