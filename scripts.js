@@ -6,7 +6,7 @@ const amountInput = document.getElementById('amount');
 const fromCurrency = document.getElementById('from-currency');
 const toCurrency = document.getElementById('to-currency');
 const convertedAmountEl = document.getElementById('converted-amount');
-const ratesContainer = document.getElementById('rates');
+const ratesContainer = document.getElementById('rates-container'); // changed to new container
 const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
 const currentYearEl = document.getElementById('currentYear');
@@ -25,6 +25,20 @@ const currencyNames = {
   // Add more as needed
 };
 
+// Map currency codes to country codes for flags (ISO 3166-1 alpha-2)
+const currencyToCountryCode = {
+  USD: 'us',
+  EUR: 'eu',
+  GBP: 'gb',
+  JPY: 'jp',
+  AUD: 'au',
+  CAD: 'ca',
+  CHF: 'ch',
+  CNY: 'cn',
+  INR: 'in',
+  // add more if needed
+};
+
 let ratesData = {};
 
 // Fetch exchange rates from API with API key
@@ -34,7 +48,6 @@ async function fetchRates() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
 
-    // Expecting data.rates object
     if (!data.rates) throw new Error('Invalid rates data');
 
     ratesData = data.rates;
@@ -51,24 +64,17 @@ async function fetchRates() {
 
 // Populate the "To" currency dropdown with available currencies
 function populateCurrencySelectors(rates) {
-  // Keep "From" fixed to INR and disabled as per HTML
-  // Clear "To" dropdown first
   toCurrency.innerHTML = '';
-
-  // Sort currencies alphabetically
   const currencies = Object.keys(rates).sort();
 
   currencies.forEach(cur => {
-    // Skip INR because From is fixed to INR
     if (cur === 'INR') return;
-
     const option = document.createElement('option');
     option.value = cur;
     option.textContent = `${cur} - ${currencyNames[cur] || 'Unknown Currency'}`;
     toCurrency.appendChild(option);
   });
 
-  // Default selection: USD if available, else first currency
   toCurrency.value = currencies.includes('USD') ? 'USD' : currencies[0];
 }
 
@@ -79,87 +85,74 @@ function updateConvertedAmount() {
     convertedAmountEl.textContent = '-';
     return;
   }
-
   const toCur = toCurrency.value;
-
   if (!ratesData || !ratesData[toCur]) {
     convertedAmountEl.textContent = '-';
     return;
   }
-
-  // Since base is INR, conversion = amount * rate
   const converted = amount * ratesData[toCur];
   convertedAmountEl.textContent = converted.toFixed(4);
 }
 
-// Display live exchange rates in the "rates" section
+// Display live exchange rates as cards
 function displayLiveRates(rates) {
-  // Clear previous content
   ratesContainer.innerHTML = '';
 
-  // Show a table of some popular currencies (including INR itself)
   const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
-
-  const table = document.createElement('table');
-  table.className = 'rates-table';
-
-  // Table header
-  const thead = document.createElement('thead');
-  thead.innerHTML = `<tr><th>Currency</th><th>Name</th><th>Rate (per 1 INR)</th></tr>`;
-  table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
 
   popularCurrencies.forEach(cur => {
     if (!rates[cur]) return;
 
-    const tr = document.createElement('tr');
+    const card = document.createElement('div');
+    card.className = 'rate-card';
 
-    const tdCode = document.createElement('td');
-    tdCode.textContent = cur;
-    tr.appendChild(tdCode);
+    // Flag icon div
+    const flagCode = currencyToCountryCode[cur] || 'un'; // 'un' unknown flag
+    const flagDiv = document.createElement('div');
+    flagDiv.className = `flag-icon flag-icon-${flagCode}`;
+    card.appendChild(flagDiv);
 
-    const tdName = document.createElement('td');
-    tdName.textContent = currencyNames[cur] || 'Unknown Currency';
-    tr.appendChild(tdName);
+    // Currency code
+    const codeDiv = document.createElement('div');
+    codeDiv.className = 'currency-code';
+    codeDiv.textContent = cur;
+    card.appendChild(codeDiv);
 
-    const tdRate = document.createElement('td');
-    tdRate.textContent = rates[cur].toFixed(4);
-    tr.appendChild(tdRate);
+    // Currency name
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'currency-name';
+    nameDiv.textContent = currencyNames[cur] || 'Unknown Currency';
+    card.appendChild(nameDiv);
 
-    tbody.appendChild(tr);
+    // Rate
+    const rateDiv = document.createElement('div');
+    rateDiv.className = 'currency-rate';
+    rateDiv.textContent = rates[cur].toFixed(4);
+    card.appendChild(rateDiv);
+
+    ratesContainer.appendChild(card);
   });
-
-  table.appendChild(tbody);
-  ratesContainer.appendChild(table);
 }
 
-// Swap the selected "to" currency back to INR and "from" currency remains INR (fixed)
-// For your design, "from" is fixed INR, so swapping just toggles between INR and selected currency in dropdown
+// Swap currencies button logic
 swapBtn.addEventListener('click', () => {
-  // Since fromCurrency is fixed INR and disabled, swapping only swaps the amount and converted amount
-  // To simulate swap, swap the amount and converted amount values
   let currentAmount = parseFloat(amountInput.value);
   let currentConverted = parseFloat(convertedAmountEl.textContent);
 
   if (isNaN(currentAmount) || isNaN(currentConverted)) return;
 
-  // Swap values
   amountInput.value = currentConverted.toFixed(4);
-  convertedAmountEl.textContent = '-'; // Will update on input event
+  convertedAmountEl.textContent = '-';
 
-  // Swap dropdown "to-currency" value to INR (simulate from INR to currency or vice versa)
   if (toCurrency.value !== 'INR') {
     toCurrency.value = 'INR';
   } else {
-    // reset to USD or first available if currently INR
     toCurrency.value = Object.keys(ratesData).includes('USD') ? 'USD' : Object.keys(ratesData)[0];
   }
 
   updateConvertedAmount();
 });
 
-// Event listeners to update conversion on user input
 amountInput.addEventListener('input', updateConvertedAmount);
 toCurrency.addEventListener('change', updateConvertedAmount);
 
