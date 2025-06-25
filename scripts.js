@@ -1,5 +1,6 @@
-const API_KEY = 'f782350a3b382aa55ff058a3';
-const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest/USD'; // We'll pick USD as base for convenience
+// --- Remove API_KEY and old API_BASE_URL ---
+// const API_KEY = 'f782350a3b382aa55ff058a3';
+// const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
 // DOM elements
 const amountInput = document.getElementById('amount');
@@ -11,163 +12,18 @@ const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
 const currentYearEl = document.getElementById('currentYear');
 
-// Currency names for display (more extensive)
+// Currency names for display (you already have this object)
 const currencyNames = {
-  AED: "UAE Dirham",
-  AFN: "Afghan Afghani",
-  ALL: "Albanian Lek",
-  AMD: "Armenian Dram",
-  ANG: "Netherlands Antillean Guilder",
-  AOA: "Angolan Kwanza",
-  ARS: "Argentine Peso",
-  AUD: "Australian Dollar",
-  AWG: "Aruban Florin",
-  AZN: "Azerbaijani Manat",
-  BAM: "Bosnia-Herzegovina Convertible Mark",
-  BBD: "Barbadian Dollar",
-  BDT: "Bangladeshi Taka",
-  BGN: "Bulgarian Lev",
-  BHD: "Bahraini Dinar",
-  BIF: "Burundian Franc",
-  BMD: "Bermudian Dollar",
-  BND: "Brunei Dollar",
-  BOB: "Bolivian Boliviano",
-  BRL: "Brazilian Real",
-  BSD: "Bahamian Dollar",
-  BTC: "Bitcoin",
-  BTN: "Bhutanese Ngultrum",
-  BWP: "Botswanan Pula",
-  BYN: "Belarusian Ruble",
-  BZD: "Belize Dollar",
-  CAD: "Canadian Dollar",
-  CDF: "Congolese Franc",
-  CHF: "Swiss Franc",
-  CLP: "Chilean Peso",
-  CNY: "Chinese Yuan",
-  COP: "Colombian Peso",
-  CRC: "Costa Rican Colón",
-  CUC: "Cuban Convertible Peso",
-  CUP: "Cuban Peso",
-  CVE: "Cape Verdean Escudo",
-  CZK: "Czech Republic Koruna",
-  DJF: "Djiboutian Franc",
-  DKK: "Danish Krone",
-  DOP: "Dominican Peso",
-  DZD: "Algerian Dinar",
-  EGP: "Egyptian Pound",
-  ERN: "Eritrean Nakfa",
-  ETB: "Ethiopian Birr",
+  USD: "US Dollar",
   EUR: "Euro",
-  FJD: "Fijian Dollar",
-  FKP: "Falkland Islands Pound",
-  GBP: "British Pound Sterling",
-  GEL: "Georgian Lari",
-  GHS: "Ghanaian Cedi",
-  GIP: "Gibraltar Pound",
-  GMD: "Gambian Dalasi",
-  GNF: "Guinean Franc",
-  GTQ: "Guatemalan Quetzal",
-  GYD: "Guyanaese Dollar",
-  HKD: "Hong Kong Dollar",
-  HNL: "Honduran Lempira",
-  HRK: "Croatian Kuna",
-  HTG: "Haitian Gourde",
-  HUF: "Hungarian Forint",
-  IDR: "Indonesian Rupiah",
-  ILS: "Israeli New Sheqel",
-  INR: "Indian Rupee",
-  IQD: "Iraqi Dinar",
-  IRR: "Iranian Rial",
-  ISK: "Icelandic Króna",
-  JMD: "Jamaican Dollar",
-  JOD: "Jordanian Dinar",
+  GBP: "British Pound",
+  AUD: "Australian Dollar",
+  CAD: "Canadian Dollar",
   JPY: "Japanese Yen",
-  KES: "Kenyan Shilling",
-  KGS: "Kyrgystani Som",
-  KHR: "Cambodian Riel",
-  KMF: "Comorian Franc",
-  KPW: "North Korean Won",
-  KRW: "South Korean Won",
-  KWD: "Kuwaiti Dinar",
-  KYD: "Cayman Islands Dollar",
-  KZT: "Kazakhstani Tenge",
-  LAK: "Laotian Kip",
-  LBP: "Lebanese Pound",
-  LKR: "Sri Lankan Rupee",
-  LRD: "Liberian Dollar",
-  LSL: "Lesotho Loti",
-  LYD: "Libyan Dinar",
-  MAD: "Moroccan Dirham",
-  MDL: "Moldovan Leu",
-  MGA: "Malagasy Ariary",
-  MKD: "Macedonian Denar",
-  MMK: "Myanma Kyat",
-  MNT: "Mongolian Tugrik",
-  MOP: "Macanese Pataca",
-  MRU: "Mauritanian Ouguiya",
-  MUR: "Mauritian Rupee",
-  MVR: "Maldivian Rufiyaa",
-  MWK: "Malawian Kwacha",
-  MXN: "Mexican Peso",
-  MYR: "Malaysian Ringgit",
-  MZN: "Mozambican Metical",
-  NAD: "Namibian Dollar",
-  NGN: "Nigerian Naira",
-  NIO: "Nicaraguan Córdoba",
-  NOK: "Norwegian Krone",
-  NPR: "Nepalese Rupee",
-  NZD: "New Zealand Dollar",
-  OMR: "Omani Rial",
-  PAB: "Panamanian Balboa",
-  PEN: "Peruvian Nuevo Sol",
-  PGK: "Papua New Guinean Kina",
-  PHP: "Philippine Peso",
-  PKR: "Pakistani Rupee",
-  PLN: "Polish Zloty",
-  PYG: "Paraguayan Guarani",
-  QAR: "Qatari Rial",
-  RON: "Romanian Leu",
-  RSD: "Serbian Dinar",
-  RUB: "Russian Ruble",
-  RWF: "Rwandan Franc",
-  SAR: "Saudi Riyal",
-  SBD: "Solomon Islands Dollar",
-  SCR: "Seychellois Rupee",
-  SDG: "Sudanese Pound",
-  SEK: "Swedish Krona",
+  CNY: "Chinese Yuan",
   SGD: "Singapore Dollar",
-  SHP: "Saint Helena Pound",
-  SLL: "Sierra Leonean Leone",
-  SOS: "Somali Shilling",
-  SRD: "Surinamese Dollar",
-  STN: "São Tomé and Príncipe Dobra",
-  SYP: "Syrian Pound",
-  SZL: "Swazi Lilangeni",
-  THB: "Thai Baht",
-  TJS: "Tajikistani Somoni",
-  TMT: "Turkmenistani Manat",
-  TND: "Tunisian Dinar",
-  TRY: "Turkish Lira",
-  TTD: "Trinidad and Tobago Dollar",
-  TWD: "New Taiwan Dollar",
-  TZS: "Tanzanian Shilling",
-  UAH: "Ukrainian Hryvnia",
-  UGX: "Ugandan Shilling",
-  USD: "United States Dollar",
-  UYU: "Uruguayan Peso",
-  UZS: "Uzbekistani Som",
-  VES: "Venezuelan Bolívar",
-  VND: "Vietnamese Dong",
-  VUV: "Vanuatu Vatu",
-  WST: "Samoan Tala",
-  XAF: "Central African CFA Franc",
-  XCD: "East Caribbean Dollar",
-  XOF: "West African CFA franc",
-  XPF: "CFP Franc",
-  YER: "Yemeni Rial",
-  ZAR: "South African Rand",
-  ZMW: "Zambian Kwacha",
-  ZWL: "Zimbabwean Dollar"
+  INR: "Indian Rupee",
+  // Add any more if you want
 };
 
 // Map currency codes to country codes for flags (ISO 3166-1 alpha-2 lowercase)
@@ -178,28 +34,34 @@ const currencyToCountryCode = {
   JPY: 'jp',
   AUD: 'au',
   CAD: 'ca',
-  CHF: 'ch',
   CNY: 'cn',
   INR: 'in',
-  // You can add more mappings as needed
+  SGD: 'sg',
 };
 
 // Data fetched from API will be stored here
 let ratesData = {};
 
-// Fetch exchange rates using USD as base currency (you can change the base if you want)
+// Fetch exchange rates from CoinGecko for INR base
 async function fetchRates() {
   try {
-    const response = await fetch(`${API_BASE_URL}?apikey=${API_KEY}`);
+    // CoinGecko simple price API for INR-based conversion rates to target currencies
+    // For demo, fetch these currencies: USD, EUR, GBP, AUD, CAD, JPY, CNY, SGD
+    const targetCurrencies = ['usd','eur','gbp','aud','cad','jpy','cny','sgd'];
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=indian-rupee&vs_currencies=${targetCurrencies.join(',')}`;
+
+    const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
     const data = await response.json();
 
-    if (!data.rates) throw new Error('Invalid rates data');
+    // data example: { "indian-rupee": { usd: 0.012, eur: 0.011, gbp: 0.009, ... } }
+    if (!data['indian-rupee']) throw new Error('Invalid data from CoinGecko');
 
-    ratesData = data.rates;
+    ratesData = data['indian-rupee']; // e.g. { usd: 0.012, eur: 0.011, ... }
 
-    populateCurrencySelectors(ratesData);
-    displayLiveRates(ratesData);
+    populateCurrencySelectorsForConverter(); // Fill dropdowns with full currencies list for converter
+    displayLiveRates(ratesData);              // Show live INR exchange rates in requested format
     updateConvertedAmount();
   } catch (error) {
     console.error('Error fetching exchange rates:', error);
@@ -207,36 +69,34 @@ async function fetchRates() {
   }
 }
 
-// Populate "From" and "To" currency dropdowns with all currencies sorted alphabetically
-function populateCurrencySelectors(rates) {
+// Populate currency dropdowns for converter (full list)
+function populateCurrencySelectorsForConverter() {
   fromCurrency.innerHTML = '';
   toCurrency.innerHTML = '';
 
-  // Get unique currency codes from rates + currencyNames keys for completeness
-  const currencies = Array.from(new Set([...Object.keys(rates), ...Object.keys(currencyNames)])).sort();
+  // Use your full currencyNames keys for converter dropdown
+  const currencies = Object.keys(currencyNames).sort();
 
   currencies.forEach(cur => {
     const name = currencyNames[cur] || 'Unknown Currency';
 
-    // From currency option
     const optionFrom = document.createElement('option');
     optionFrom.value = cur;
     optionFrom.textContent = `${cur} - ${name}`;
     fromCurrency.appendChild(optionFrom);
 
-    // To currency option
     const optionTo = document.createElement('option');
     optionTo.value = cur;
     optionTo.textContent = `${cur} - ${name}`;
     toCurrency.appendChild(optionTo);
   });
 
-  // Set defaults
-  fromCurrency.value = 'USD';
-  toCurrency.value = 'INR';
+  // Set defaults for converter
+  fromCurrency.value = 'INR';
+  toCurrency.value = 'USD';
 }
 
-// Convert amount from "fromCurrency" to "toCurrency"
+// Convert amount in converter
 function updateConvertedAmount() {
   const amount = parseFloat(amountInput.value);
   if (isNaN(amount) || amount < 0) {
@@ -244,29 +104,51 @@ function updateConvertedAmount() {
     return;
   }
 
-  const fromCur = fromCurrency.value;
-  const toCur = toCurrency.value;
+  const fromCur = fromCurrency.value.toLowerCase();
+  const toCur = toCurrency.value.toLowerCase();
 
-  // Check if rates exist for both currencies
-  if (!ratesData[fromCur] || !ratesData[toCur]) {
-    convertedAmountEl.textContent = '-';
-    return;
+  // Simple direct conversion via CoinGecko if from or to is INR
+  // Since CoinGecko ratesData only has INR base rates (INR -> others),
+  // we handle conversions with INR as base or target
+
+  if (fromCur === 'inr') {
+    // INR to other
+    if (!ratesData[toCur]) {
+      convertedAmountEl.textContent = '-';
+      return;
+    }
+    const converted = amount * ratesData[toCur];
+    convertedAmountEl.textContent = converted.toFixed(4);
+  } else if (toCur === 'inr') {
+    // Other to INR (invert rate)
+    if (!ratesData[fromCur]) {
+      convertedAmountEl.textContent = '-';
+      return;
+    }
+    const converted = amount / ratesData[fromCur];
+    convertedAmountEl.textContent = converted.toFixed(4);
+  } else {
+    // Neither from nor to is INR, convert via INR as intermediary
+    if (!ratesData[fromCur] || !ratesData[toCur]) {
+      convertedAmountEl.textContent = '-';
+      return;
+    }
+    // formula: amount * (INR->toCur) / (INR->fromCur)
+    const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
+    convertedAmountEl.textContent = converted.toFixed(4);
   }
-
-  // Exchange rate formula: amount * (rate[toCur] / rate[fromCur])
-  const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
-  convertedAmountEl.textContent = converted.toFixed(4);
 }
 
-// Display live exchange rates as cards with flags and currency names
+// Display live INR exchange rates with flags, currency, and format "1 INR = X USD"
 function displayLiveRates(rates) {
   ratesContainer.innerHTML = '';
 
-  // Popular currencies for live rate cards
-  const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
+  // Show these currencies in order, with flags and rate
+  const displayCurrencies = ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'JPY', 'CNY', 'SGD'];
 
-  popularCurrencies.forEach(cur => {
-    if (!rates[cur]) return;
+  displayCurrencies.forEach(cur => {
+    const curLower = cur.toLowerCase();
+    if (!rates[curLower]) return;
 
     const card = document.createElement('div');
     card.className = 'rate-card';
@@ -274,33 +156,40 @@ function displayLiveRates(rates) {
     // Flag icon div
     const flagCode = currencyToCountryCode[cur];
     const flagDiv = document.createElement('div');
+    flagDiv.className = 'flag-icon';
 
     if (flagCode) {
-flagDiv.className = `fi fi-${flagCode}`; // instead of flag-icon
+      flagDiv.className = `fi fi-${flagCode}`; // Use flag-icons classes
     } else {
-      flagDiv.textContent = cur; // fallback text if no flag
+      flagDiv.textContent = cur; // fallback text
       flagDiv.style.fontWeight = '700';
       flagDiv.style.fontSize = '20px';
     }
 
     card.appendChild(flagDiv);
 
-    // Currency code
-    const codeDiv = document.createElement('div');
-    codeDiv.className = 'currency-code';
-    codeDiv.textContent = cur;
-    card.appendChild(codeDiv);
+    // Currency code & name div
+    const codeNameDiv = document.createElement('div');
+    codeNameDiv.className = 'currency-info';
 
-    // Currency name
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'currency-name';
-    nameDiv.textContent = currencyNames[cur] || 'Unknown Currency';
-    card.appendChild(nameDiv);
+    const codeEl = document.createElement('div');
+    codeEl.className = 'currency-code';
+    codeEl.textContent = cur;
 
-    // Rate
+    const nameEl = document.createElement('div');
+    nameEl.className = 'currency-name';
+    nameEl.textContent = currencyNames[cur] || 'Unknown Currency';
+
+    codeNameDiv.appendChild(codeEl);
+    codeNameDiv.appendChild(nameEl);
+
+    card.appendChild(codeNameDiv);
+
+    // Rate div with format: 1 INR = X CUR
     const rateDiv = document.createElement('div');
     rateDiv.className = 'currency-rate';
-    rateDiv.textContent = rates[cur].toFixed(4);
+    rateDiv.textContent = `1 INR = ${rates[curLower].toFixed(4)} ${cur}`;
+
     card.appendChild(rateDiv);
 
     ratesContainer.appendChild(card);
@@ -320,7 +209,7 @@ amountInput.addEventListener('input', updateConvertedAmount);
 fromCurrency.addEventListener('change', updateConvertedAmount);
 toCurrency.addEventListener('change', updateConvertedAmount);
 
-// FAQ content
+// FAQ content and renderFaq() remain unchanged
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -344,7 +233,6 @@ const faqData = [
   }
 ];
 
-// Render FAQ on the page
 function renderFaq() {
   faqList.innerHTML = '';
   faqData.forEach(({ question, answer }, i) => {
