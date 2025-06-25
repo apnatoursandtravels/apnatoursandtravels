@@ -1,286 +1,169 @@
+const API_KEY = 'f782350a3b382aa55ff058a3';
+const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest/INR'; // Replace if your API differs
+
 // DOM elements
 const amountInput = document.getElementById('amount');
-const fromCurrency = document.getElementById('fromCurrency');
-const toCurrency = document.getElementById('toCurrency');
-const convertedValueEl = document.getElementById('convertedValue');
-const convertedCurrencyEl = document.getElementById('convertedCurrency');
-const exchangeRateText = document.getElementById('exchangeRateText');
-const exchangeRateUpdated = document.getElementById('exchangeRateUpdated');
-const ratesTableBody = document.querySelector('#ratesTable tbody');
-const ratesLastUpdated = document.getElementById('ratesLastUpdated');
-const currentYearEl = document.getElementById('currentYear');
-const swapBtn = document.getElementById('swapBtn');
+const fromCurrency = document.getElementById('from-currency');
+const toCurrency = document.getElementById('to-currency');
+const convertedAmountEl = document.getElementById('converted-amount');
+const ratesContainer = document.getElementById('rates');
 const faqList = document.getElementById('faqList');
+const swapBtn = document.getElementById('swap-btn');
+const currentYearEl = document.getElementById('currentYear');
 
-const timeframeButtons = document.querySelectorAll('.timeframe-btn');
-const currencyButtons = document.querySelectorAll('.currency-btn');
-const ctx = document.getElementById('exchangeChart').getContext('2d');
-
-let ratesData = {};
-let chart;
-let selectedCurrencies = new Set(['USD', 'EUR']);
-let selectedDays = 7;
-
-// Currency list and names for quick reference
+// Currency names for display
 const currencyNames = {
   USD: 'US Dollar',
   EUR: 'Euro',
   GBP: 'British Pound',
   JPY: 'Japanese Yen',
+  AUD: 'Australian Dollar',
+  CAD: 'Canadian Dollar',
+  CHF: 'Swiss Franc',
+  CNY: 'Chinese Yuan',
+  INR: 'Indian Rupee',
   // Add more as needed
 };
 
-// Utility: fetch exchange rates from exchangerate.host
+let ratesData = {};
+
+// Fetch exchange rates from API with API key
 async function fetchRates() {
   try {
-    const response = await fetch('https://api.exchangerate.host/latest?base=INR');
+    const response = await fetch(`${API_BASE_URL}?apikey=${API_KEY}`);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
-    ratesData = data;
-    updateConverterOptions(data.rates);
-    updateRatesTable(data.rates);
-    updateConverter();
-    updateRatesLastUpdated(data.date);
-  } catch (e) {
-    console.error('Failed to fetch exchange rates:', e);
+
+    // Expecting data.rates object
+    if (!data.rates) throw new Error('Invalid rates data');
+
+    ratesData = data.rates;
+
+    populateCurrencySelectors(ratesData);
+    displayLiveRates(ratesData);
+    updateConvertedAmount();
+
+  } catch (error) {
+    console.error('Error fetching exchange rates:', error);
+    ratesContainer.textContent = 'Failed to load exchange rates. Please try again later.';
   }
 }
 
-// Fill currency select options
-function updateConverterOptions(rates) {
-  const currencies = Object.keys(rates).sort();
-  fromCurrency.innerHTML = '';
+// Populate the "To" currency dropdown with available currencies
+function populateCurrencySelectors(rates) {
+  // Keep "From" fixed to INR and disabled as per HTML
+  // Clear "To" dropdown first
   toCurrency.innerHTML = '';
-  currencies.forEach(currency => {
-    const name = currencyNames[currency] || currency;
-    const optionFrom = document.createElement('option');
-    optionFrom.value = currency;
-    optionFrom.textContent = `${currency} - ${name}`;
-    fromCurrency.appendChild(optionFrom);
 
-    const optionTo = optionFrom.cloneNode(true);
-    toCurrency.appendChild(optionTo);
+  // Sort currencies alphabetically
+  const currencies = Object.keys(rates).sort();
+
+  currencies.forEach(cur => {
+    // Skip INR because From is fixed to INR
+    if (cur === 'INR') return;
+
+    const option = document.createElement('option');
+    option.value = cur;
+    option.textContent = `${cur} - ${currencyNames[cur] || 'Unknown Currency'}`;
+    toCurrency.appendChild(option);
   });
-  // Default selections
-  fromCurrency.value = 'INR';
-  toCurrency.value = 'USD';
+
+  // Default selection: USD if available, else first currency
+  toCurrency.value = currencies.includes('USD') ? 'USD' : currencies[0];
 }
 
-// Update the converted amount display
-function updateConverter() {
-  const amount = parseFloat(amountInput.value) || 0;
-  const from = fromCurrency.value;
-  const to = toCurrency.value;
-
-  if (!ratesData.rates) return;
-
-  // Convert from 'from' to INR, then INR to 'to'
-  let amountInINR;
-  if (from === 'INR') {
-    amountInINR = amount;
-  } else {
-    const rateFrom = ratesData.rates[from];
-    if (!rateFrom) {
-      convertedValueEl.textContent = 'N/A';
-      convertedCurrencyEl.textContent = '';
-      exchangeRateText.textContent = '';
-      return;
-    }
-    amountInINR = amount / rateFrom;
-  }
-
-  const rateTo = ratesData.rates[to];
-  if (!rateTo) {
-    convertedValueEl.textContent = 'N/A';
-    convertedCurrencyEl.textContent = '';
-    exchangeRateText.textContent = '';
+// Convert INR amount to selected currency and display
+function updateConvertedAmount() {
+  const amount = parseFloat(amountInput.value);
+  if (isNaN(amount) || amount < 0) {
+    convertedAmountEl.textContent = '-';
     return;
   }
 
-  const convertedAmount = amountInINR * rateTo;
-  convertedValueEl.textContent = convertedAmount.toFixed(4);
-  convertedCurrencyEl.textContent = to;
+  const toCur = toCurrency.value;
 
-  exchangeRateText.textContent = `1 ${from} = ${(rateTo / (ratesData.rates[from] || 1)).toFixed(4)} ${to}`;
-  exchangeRateUpdated.textContent = `Rates last updated: ${ratesData.date}`;
+  if (!ratesData || !ratesData[toCur]) {
+    convertedAmountEl.textContent = '-';
+    return;
+  }
+
+  // Since base is INR, conversion = amount * rate
+  const converted = amount * ratesData[toCur];
+  convertedAmountEl.textContent = converted.toFixed(4);
 }
 
-// Update rates table
-function updateRatesTable(rates) {
-  ratesTableBody.innerHTML = '';
-  // For demo: show some major currencies + INR itself
-  const currenciesToShow = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
-  currenciesToShow.forEach(currency => {
-    const rate = rates[currency];
-    if (!rate) return;
+// Display live exchange rates in the "rates" section
+function displayLiveRates(rates) {
+  // Clear previous content
+  ratesContainer.innerHTML = '';
+
+  // Show a table of some popular currencies (including INR itself)
+  const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
+
+  const table = document.createElement('table');
+  table.className = 'rates-table';
+
+  // Table header
+  const thead = document.createElement('thead');
+  thead.innerHTML = `<tr><th>Currency</th><th>Name</th><th>Rate (per 1 INR)</th></tr>`;
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+
+  popularCurrencies.forEach(cur => {
+    if (!rates[cur]) return;
 
     const tr = document.createElement('tr');
 
-    const tdCurrency = document.createElement('td');
-    tdCurrency.textContent = currency;
-    tr.appendChild(tdCurrency);
+    const tdCode = document.createElement('td');
+    tdCode.textContent = cur;
+    tr.appendChild(tdCode);
 
     const tdName = document.createElement('td');
-    tdName.textContent = currencyNames[currency] || currency;
+    tdName.textContent = currencyNames[cur] || 'Unknown Currency';
     tr.appendChild(tdName);
 
     const tdRate = document.createElement('td');
-    tdRate.textContent = rate.toFixed(4);
+    tdRate.textContent = rates[cur].toFixed(4);
     tr.appendChild(tdRate);
 
-    // Placeholder for 24h change (API doesn't provide, so static or random demo)
-    const tdChange = document.createElement('td');
-    const change = (Math.random() * 2 - 1).toFixed(2);
-    tdChange.textContent = `${change}%`;
-    tdChange.className = change >= 0 ? 'change-positive' : 'change-negative';
-    tr.appendChild(tdChange);
-
-    ratesTableBody.appendChild(tr);
+    tbody.appendChild(tr);
   });
+
+  table.appendChild(tbody);
+  ratesContainer.appendChild(table);
 }
 
-// Update last updated text
-function updateRatesLastUpdated(dateStr) {
-  ratesLastUpdated.textContent = `Last updated: ${dateStr}`;
-}
-
-// Swap from and to currencies
+// Swap the selected "to" currency back to INR and "from" currency remains INR (fixed)
+// For your design, "from" is fixed INR, so swapping just toggles between INR and selected currency in dropdown
 swapBtn.addEventListener('click', () => {
-  const fromVal = fromCurrency.value;
-  fromCurrency.value = toCurrency.value;
-  toCurrency.value = fromVal;
-  updateConverter();
-});
+  // Since fromCurrency is fixed INR and disabled, swapping only swaps the amount and converted amount
+  // To simulate swap, swap the amount and converted amount values
+  let currentAmount = parseFloat(amountInput.value);
+  let currentConverted = parseFloat(convertedAmountEl.textContent);
 
-// Update converter on input/select change
-amountInput.addEventListener('input', updateConverter);
-fromCurrency.addEventListener('change', updateConverter);
-toCurrency.addEventListener('change', updateConverter);
+  if (isNaN(currentAmount) || isNaN(currentConverted)) return;
 
-// Chart related functions
-async function fetchHistoricalRates(days) {
-  try {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - days);
-    const startStr = startDate.toISOString().slice(0, 10);
-    const endStr = endDate.toISOString().slice(0, 10);
+  // Swap values
+  amountInput.value = currentConverted.toFixed(4);
+  convertedAmountEl.textContent = '-'; // Will update on input event
 
-    const currencies = Array.from(selectedCurrencies).join(',');
-    const url = `https://api.exchangerate.host/timeseries?start_date=${startStr}&end_date=${endStr}&base=INR&symbols=${currencies}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (!data.rates) throw new Error('No data');
-
-    return data.rates;
-  } catch (e) {
-    console.error('Error fetching historical rates', e);
-    return null;
-  }
-}
-
-function prepareChartData(rates) {
-  const labels = Object.keys(rates).sort();
-  const datasets = [];
-
-  selectedCurrencies.forEach((currency) => {
-    const dataPoints = labels.map(date => rates[date][currency]);
-    const color = currencyColor(currency);
-    datasets.push({
-      label: currency,
-      data: dataPoints,
-      borderColor: color,
-      backgroundColor: color + '80',
-      fill: false,
-      tension: 0.1,
-    });
-  });
-
-  return { labels, datasets };
-}
-
-function currencyColor(currency) {
-  const colors = {
-    USD: '#3b82f6',
-    EUR: '#10b981',
-    GBP: '#8b5cf6',
-    JPY: '#f59e0b',
-  };
-  return colors[currency] || '#6b7280';
-}
-
-async function updateChart() {
-  const rates = await fetchHistoricalRates(selectedDays);
-  if (!rates) return;
-
-  const chartData = prepareChartData(rates);
-
-  if (chart) {
-    chart.data = chartData;
-    chart.update();
+  // Swap dropdown "to-currency" value to INR (simulate from INR to currency or vice versa)
+  if (toCurrency.value !== 'INR') {
+    toCurrency.value = 'INR';
   } else {
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: chartData,
-      options: {
-        responsive: true,
-        interaction: {
-          mode: 'nearest',
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom',
-          },
-          tooltip: {
-            enabled: true,
-          },
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-              text: 'Value (per 1 INR)',
-            },
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Date',
-            },
-          },
-        },
-      },
-    });
+    // reset to USD or first available if currently INR
+    toCurrency.value = Object.keys(ratesData).includes('USD') ? 'USD' : Object.keys(ratesData)[0];
   }
-}
 
-// Handle timeframe buttons
-timeframeButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    timeframeButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedDays = parseInt(btn.dataset.days);
-    updateChart();
-  });
+  updateConvertedAmount();
 });
 
-// Handle currency toggle buttons
-currencyButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.classList.toggle('active');
-    const cur = btn.dataset.currency;
-    if (selectedCurrencies.has(cur)) {
-      selectedCurrencies.delete(cur);
-    } else {
-      selectedCurrencies.add(cur);
-    }
-    updateChart();
-  });
-});
+// Event listeners to update conversion on user input
+amountInput.addEventListener('input', updateConvertedAmount);
+toCurrency.addEventListener('change', updateConvertedAmount);
 
-// FAQ data and rendering
+// FAQ content
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -304,7 +187,7 @@ const faqData = [
   }
 ];
 
-// Render FAQ
+// Render FAQ on the page
 function renderFaq() {
   faqList.innerHTML = '';
   faqData.forEach(({ question, answer }, i) => {
@@ -341,12 +224,12 @@ function renderFaq() {
   });
 }
 
-// Initialize page
+// Initialize everything
 function init() {
   currentYearEl.textContent = new Date().getFullYear();
   fetchRates();
   renderFaq();
-  updateChart();
+  updateConvertedAmount();
 }
 
 init();
