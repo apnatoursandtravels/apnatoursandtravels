@@ -1,5 +1,4 @@
-const API_KEY = 'f782350a3b382aa55ff058a3';
-const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest/USD'; // We'll pick USD as base for convenience
+const API_BASE_URL = 'https://v6.exchangerate-api.com/v6/f782350a3b382aa55ff058a3/latest/INR';
 
 // DOM elements
 const amountInput = document.getElementById('amount');
@@ -11,7 +10,7 @@ const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
 const currentYearEl = document.getElementById('currentYear');
 
-// Currency names for display (more extensive)
+// Currency names for display
 const currencyNames = {
   AED: "UAE Dirham",
   AFN: "Afghan Afghani",
@@ -170,33 +169,29 @@ const currencyNames = {
   ZWL: "Zimbabwean Dollar"
 };
 
-// Map currency codes to country codes for flags (ISO 3166-1 alpha-2 lowercase)
+// Currency code to flag
 const currencyToCountryCode = {
   USD: 'us',
-  EUR: '',        // no flag for euro
+  EUR: '',
   GBP: 'gb',
   JPY: 'jp',
   AUD: 'au',
   CAD: 'ca',
   CHF: 'ch',
   CNY: 'cn',
-  INR: 'in',
-  // You can add more mappings as needed
+  INR: 'in'
 };
 
-// Data fetched from API will be stored here
 let ratesData = {};
 
-// Fetch exchange rates using USD as base currency (you can change the base if you want)
 async function fetchRates() {
   try {
-    const response = await fetch(${API_BASE_URL}?apikey=${API_KEY});
-    if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+    const response = await fetch(API_BASE_URL);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
+    if (!data.conversion_rates) throw new Error('Invalid rates data');
 
-    if (!data.rates) throw new Error('Invalid rates data');
-
-    ratesData = data.rates;
+    ratesData = data.conversion_rates;
 
     populateCurrencySelectors(ratesData);
     displayLiveRates(ratesData);
@@ -207,36 +202,30 @@ async function fetchRates() {
   }
 }
 
-// Populate "From" and "To" currency dropdowns with all currencies sorted alphabetically
 function populateCurrencySelectors(rates) {
   fromCurrency.innerHTML = '';
   toCurrency.innerHTML = '';
 
-  // Get unique currency codes from rates + currencyNames keys for completeness
-  const currencies = Array.from(new Set([...Object.keys(rates), ...Object.keys(currencyNames)])).sort();
+  const currencies = Object.keys(rates).sort();
 
   currencies.forEach(cur => {
     const name = currencyNames[cur] || 'Unknown Currency';
 
-    // From currency option
     const optionFrom = document.createElement('option');
     optionFrom.value = cur;
-    optionFrom.textContent = ${cur} - ${name};
+    optionFrom.textContent = `${cur} - ${name}`;
     fromCurrency.appendChild(optionFrom);
 
-    // To currency option
     const optionTo = document.createElement('option');
     optionTo.value = cur;
-    optionTo.textContent = ${cur} - ${name};
+    optionTo.textContent = `${cur} - ${name}`;
     toCurrency.appendChild(optionTo);
   });
 
-  // Set defaults
   fromCurrency.value = 'USD';
   toCurrency.value = 'INR';
 }
 
-// Convert amount from "fromCurrency" to "toCurrency"
 function updateConvertedAmount() {
   const amount = parseFloat(amountInput.value);
   if (isNaN(amount) || amount < 0) {
@@ -247,22 +236,18 @@ function updateConvertedAmount() {
   const fromCur = fromCurrency.value;
   const toCur = toCurrency.value;
 
-  // Check if rates exist for both currencies
   if (!ratesData[fromCur] || !ratesData[toCur]) {
     convertedAmountEl.textContent = '-';
     return;
   }
 
-  // Exchange rate formula: amount * (rate[toCur] / rate[fromCur])
   const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
   convertedAmountEl.textContent = converted.toFixed(4);
 }
 
-// Display live exchange rates as cards with flags and currency names
 function displayLiveRates(rates) {
   ratesContainer.innerHTML = '';
 
-  // Popular currencies for live rate cards
   const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
 
   popularCurrencies.forEach(cur => {
@@ -271,33 +256,29 @@ function displayLiveRates(rates) {
     const card = document.createElement('div');
     card.className = 'rate-card';
 
-    // Flag icon div
     const flagCode = currencyToCountryCode[cur];
     const flagDiv = document.createElement('div');
 
     if (flagCode) {
-flagDiv.className = fi fi-${flagCode}; // instead of flag-icon
+      flagDiv.className = `fi fi-${flagCode}`;
     } else {
-      flagDiv.textContent = cur; // fallback text if no flag
+      flagDiv.textContent = cur;
       flagDiv.style.fontWeight = '700';
       flagDiv.style.fontSize = '20px';
     }
 
     card.appendChild(flagDiv);
 
-    // Currency code
     const codeDiv = document.createElement('div');
     codeDiv.className = 'currency-code';
     codeDiv.textContent = cur;
     card.appendChild(codeDiv);
 
-    // Currency name
     const nameDiv = document.createElement('div');
     nameDiv.className = 'currency-name';
     nameDiv.textContent = currencyNames[cur] || 'Unknown Currency';
     card.appendChild(nameDiv);
 
-    // Rate
     const rateDiv = document.createElement('div');
     rateDiv.className = 'currency-rate';
     rateDiv.textContent = rates[cur].toFixed(4);
@@ -307,7 +288,6 @@ flagDiv.className = fi fi-${flagCode}; // instead of flag-icon
   });
 }
 
-// Swap currencies button logic
 swapBtn.addEventListener('click', () => {
   const temp = fromCurrency.value;
   fromCurrency.value = toCurrency.value;
@@ -320,7 +300,6 @@ amountInput.addEventListener('input', updateConvertedAmount);
 fromCurrency.addEventListener('change', updateConvertedAmount);
 toCurrency.addEventListener('change', updateConvertedAmount);
 
-// FAQ content
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -344,7 +323,6 @@ const faqData = [
   }
 ];
 
-// Render FAQ on the page
 function renderFaq() {
   faqList.innerHTML = '';
   faqData.forEach(({ question, answer }, i) => {
@@ -357,11 +335,11 @@ function renderFaq() {
     q.tabIndex = 0;
     q.setAttribute('role', 'button');
     q.setAttribute('aria-expanded', 'false');
-    q.setAttribute('aria-controls', faq-answer-${i});
+    q.setAttribute('aria-controls', `faq-answer-${i}`);
 
     const a = document.createElement('div');
     a.className = 'faq-answer';
-    a.id = faq-answer-${i};
+    a.id = `faq-answer-${i}`;
     a.textContent = answer;
 
     q.addEventListener('click', () => {
@@ -381,7 +359,6 @@ function renderFaq() {
   });
 }
 
-// Initialize everything
 function init() {
   currentYearEl.textContent = new Date().getFullYear();
   fetchRates();
