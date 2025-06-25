@@ -150,43 +150,29 @@ button:active {
   background-color: #dbeafe;
 }
 
-/* Glassmorphism */
-.glass-card {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  padding: 24px;
-  margin: 40px 0;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  transition: box-shadow 0.3s ease;
+/* Calculator Section */
+.calculator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+  justify-content: center;
 }
 
-.glass-card:hover {
-  box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.25);
-}
-
-/* Converter */
-.converter-section h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-}
-
-.form-group {
+.currency-select {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
-  max-width: 300px;
+  max-width: 180px;
+  width: 100%;
 }
 
-.form-group label {
+.currency-select label {
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-input[type="number"], select {
+.currency-select select {
   padding: 8px 12px;
   font-size: 1rem;
   border-radius: 8px;
@@ -194,66 +180,87 @@ input[type="number"], select {
   transition: box-shadow 0.3s ease;
 }
 
-input[type="number"]:focus, select:focus {
+.currency-select select:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
   border-color: #3b82f6;
 }
 
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: nowrap;
+.currency-select select:disabled {
+  background-color: #e5e7eb;
+  color: #64748b;
+  cursor: not-allowed;
 }
 
-.swap-btn {
-  font-size: 1.5rem;
+.amount-input {
+  display: flex;
+  flex-direction: column;
+  max-width: 180px;
+  width: 100%;
+}
+
+.amount-input label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.amount-input input[type="number"] {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  transition: box-shadow 0.3s ease;
+}
+
+.amount-input input[type="number"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+}
+
+#swap-btn {
+  font-size: 1.75rem;
   background: var(--blue);
   color: white;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border: none;
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
   transition: background-color 0.2s ease;
+  margin-top: 24px;
+  flex-shrink: 0;
 }
 
-.swap-btn:hover {
+#swap-btn:hover {
   background-color: #2563eb;
 }
 
-.converted-amount p {
-  margin: 0;
+.converted-result {
+  flex: 1 1 100%;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.converted-result p:first-child {
+  margin-bottom: 8px;
   font-weight: 600;
-}
-
-.converted-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-right: 6px;
-}
-
-.exchange-rate {
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   color: #64748b;
-  margin-top: 8px;
 }
 
-.exchange-rate.updated-time {
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-/* Rates Table */
-.rates-section h2 {
-  font-size: 1.75rem;
+#converted-amount {
+  font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 24px;
+  color: var(--blue);
 }
 
-.table-container {
+/* Rates Section */
+#rates {
+  margin: 32px 0 64px 0;
   overflow-x: auto;
 }
 
@@ -280,82 +287,13 @@ input[type="number"]:focus, select:focus {
 }
 
 .change-positive {
-  color: #10b981;
+  color: var(--green);
   font-weight: 600;
 }
 
 .change-negative {
   color: #ef4444;
   font-weight: 600;
-}
-
-.last-updated {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 12px;
-  text-align: right;
-}
-
-/* Chart Section */
-.chart-section {
-  margin-bottom: 60px;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.timeframe-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.timeframe-btn {
-  background: #e5e7eb;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #374151;
-  border: none;
-}
-
-.timeframe-btn.active,
-.timeframe-btn:hover {
-  background: var(--blue);
-  color: white;
-}
-
-.currency-toggles {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.currency-btn {
-  background: #e5e7eb;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  color: #374151;
-}
-
-.currency-btn.active,
-.currency-btn:hover {
-  background: var(--blue);
-  color: white;
-}
-
-.chart-note {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 16px;
 }
 
 /* FAQ Section */
@@ -394,6 +332,7 @@ input[type="number"]:focus, select:focus {
   cursor: pointer;
   position: relative;
   padding-right: 24px;
+  outline: none;
 }
 
 .faq-question::after {
@@ -586,12 +525,12 @@ input[type="number"]:focus, select:focus {
   .hero-content p {
     font-size: 1rem;
   }
-  .form-row {
+  .calculator {
     flex-direction: column;
     align-items: stretch;
   }
-  .swap-btn {
+  #swap-btn {
     align-self: center;
-    margin: 12px 0;
+    margin: 16px 0;
   }
 }
