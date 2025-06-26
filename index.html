@@ -42,44 +42,49 @@
 
     <!-- Calculator Section -->
     <section id="converter" class="calculator-box">
-      <h2>Currency Converter</h2>
+      <h2 style="text-align: center; margin-bottom: 24px;">Currency Converter</h2>
       <div class="calculator">
 
+        <!-- From Currency -->
         <div id="from-currency-container" class="currency-select">
           <label for="from-currency-input">From:</label>
           <input type="text" id="from-currency-input" autocomplete="off" placeholder="Type or select currency" />
           <div id="from-currency-dropdown" class="dropdown"></div>
         </div>
 
+        <!-- Swap Button -->
         <button id="swap-btn" title="Swap currencies">&#8646;</button>
 
+        <!-- To Currency -->
         <div id="to-currency-container" class="currency-select">
           <label for="to-currency-input">To:</label>
           <input type="text" id="to-currency-input" autocomplete="off" placeholder="Type or select currency" />
           <div id="to-currency-dropdown" class="dropdown"></div>
         </div>
 
+        <!-- Amount Input -->
         <div class="amount-input">
           <label for="amount">Amount:</label>
           <input type="number" id="amount" value="1" min="0" />
         </div>
 
-        <div class="converted-result">
-          <p>Converted Amount:</p>
-          <p id="converted-amount">-</p>
-        </div>
+      </div>
 
+      <!-- Converted Result -->
+      <div class="converted-result">
+        <p>Converted Amount:</p>
+        <p id="converted-amount">-</p>
       </div>
     </section>
 
     <!-- Live Rates Section -->
     <section id="rates">
-      <h2>Live INR Exchange Rates</h2>
+      <h2 style="text-align: center;">Live INR Exchange Rates</h2>
       <div id="rates-container" class="rates-cards"></div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="container faq-section">
+    <section id="faq" class="faq-section">
       <h2>Frequently Asked Questions</h2>
       <p>Find answers to common questions about currency exchange and our services.</p>
       <div class="faq-list" id="faqList"></div>
@@ -139,9 +144,10 @@
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="scripts.js"></script>
   <script>
-    // Update current year
+    // Set current year
     document.getElementById("currentYear").textContent = new Date().getFullYear();
 
     // Set current date and time
