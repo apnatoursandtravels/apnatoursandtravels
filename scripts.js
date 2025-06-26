@@ -230,8 +230,8 @@ function populateCurrencySelectors(rates) {
     toCurrency.appendChild(optionTo);
   });
 
-  fromCurrency.value = 'USD';
-  toCurrency.value = 'INR';
+  fromCurrency.value = 'INR';
+  toCurrency.value = 'USD';
 }
 
 function updateConvertedAmount() {
@@ -300,6 +300,15 @@ function displayLiveRates(rates) {
     card.appendChild(rateDiv);
 
     ratesContainer.appendChild(card);
+
+    // Make rate card clickable to auto-fill dropdowns
+card.style.cursor = 'pointer';
+card.addEventListener('click', () => {
+  fromCurrency.value = 'INR';
+  toCurrency.value = cur;
+  updateConvertedAmount();
+});
+
   });
 }
 
