@@ -10,7 +10,7 @@ const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
 const currentYearEl = document.getElementById('currentYear');
 
-// Currency names for display
+// Currency names for display (full list including requested currencies)
 const currencyNames = {
   AED: "UAE Dirham",
   AFN: "Afghan Afghani",
@@ -41,8 +41,8 @@ const currencyNames = {
   CAD: "Canadian Dollar",
   CDF: "Congolese Franc",
   CHF: "Swiss Franc",
+  // Removed CNY (Chinese Yuan)
   CLP: "Chilean Peso",
-  CNY: "Chinese Yuan",
   COP: "Colombian Peso",
   CRC: "Costa Rican Colón",
   CUC: "Cuban Convertible Peso",
@@ -80,7 +80,7 @@ const currencyNames = {
   ISK: "Icelandic Króna",
   JMD: "Jamaican Dollar",
   JOD: "Jordanian Dinar",
-  JPY: "Japanese Yen",
+  // Removed JPY (Japanese Yen)
   KES: "Kenyan Shilling",
   KGS: "Kyrgystani Som",
   KHR: "Cambodian Riel",
@@ -169,17 +169,22 @@ const currencyNames = {
   ZWL: "Zimbabwean Dollar"
 };
 
-// Currency code to flag
+// Currency code to flag (added new countries)
 const currencyToCountryCode = {
   USD: 'us',
   EUR: '',
   GBP: 'gb',
-  JPY: 'jp',
+  // Removed JPY and CNY flags since removed
   AUD: 'au',
   CAD: 'ca',
   CHF: 'ch',
-  CNY: 'cn',
-  INR: 'in'
+  INR: 'in',
+  SAR: 'sa',   // Saudi Arabia
+  QAR: 'qa',   // Qatar
+  BHD: 'bh',   // Bahrain
+  OMR: 'om',   // Oman
+  KWD: 'kw',   // Kuwait
+  THB: 'th'    // Thailand
 };
 
 let ratesData = {};
@@ -206,7 +211,10 @@ function populateCurrencySelectors(rates) {
   fromCurrency.innerHTML = '';
   toCurrency.innerHTML = '';
 
-  const currencies = Object.keys(rates).sort();
+  // Remove CNY and JPY
+  const currencies = Object.keys(rates)
+    .filter(cur => cur !== 'CNY' && cur !== 'JPY') 
+    .sort();
 
   currencies.forEach(cur => {
     const name = currencyNames[cur] || 'Unknown Currency';
@@ -242,13 +250,18 @@ function updateConvertedAmount() {
   }
 
   const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
-  convertedAmountEl.textContent = converted.toFixed(4);
+  // Show converted amount with currency code e.g., "7 USD"
+  convertedAmountEl.textContent = `${converted.toFixed(4)} ${toCur}`;
 }
 
 function displayLiveRates(rates) {
   ratesContainer.innerHTML = '';
 
-  const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR'];
+  // Popular currencies list — removing CNY and JPY, adding your requested countries
+  const popularCurrencies = [
+    'USD', 'EUR', 'GBP', /* 'JPY', */ 'AUD', 'CAD', 'CHF', /* 'CNY', */ 'INR',
+    'SAR', 'QAR', 'BHD', 'OMR', 'KWD', 'THB'
+  ];
 
   popularCurrencies.forEach(cur => {
     if (!rates[cur]) return;
@@ -281,7 +294,8 @@ function displayLiveRates(rates) {
 
     const rateDiv = document.createElement('div');
     rateDiv.className = 'currency-rate';
-    rateDiv.textContent = rates[cur].toFixed(4);
+    // Show rate as "1 INR = [rate]"
+    rateDiv.textContent = `1 INR = ${rates[cur].toFixed(4)}`;
     card.appendChild(rateDiv);
 
     ratesContainer.appendChild(card);
@@ -320,50 +334,57 @@ const faqData = [
   {
     question: "How can I contact customer support?",
     answer: "You can reach us at info@apnatravels.com or call +91 98765 43210 during business hours."
+  },
+  {
+    question: "Do you offer delivery services?",
+    answer: "Yes, we provide both delivery and in-person services for your convenience."
+  },
+  {
+    question: "What documents are required to exchange currency?",
+    answer: "To comply with Indian regulations, please carry a valid government-issued photo ID (such as Aadhaar card, PAN card, or Passport) along with your PAN card details for transactions above specified limits. Proof of address may also be required."
   }
 ];
 
-function renderFaq() {
+function renderFAQ() {
   faqList.innerHTML = '';
-  faqData.forEach(({ question, answer }, i) => {
-    const item = document.createElement('div');
-    item.className = 'faq-item';
 
-    const q = document.createElement('div');
-    q.className = 'faq-question';
-    q.textContent = question;
-    q.tabIndex = 0;
-    q.setAttribute('role', 'button');
-    q.setAttribute('aria-expanded', 'false');
-    q.setAttribute('aria-controls', `faq-answer-${i}`);
+  faqData.forEach((item, index) => {
+    const faqItem = document.createElement('div');
+    faqItem.className = 'faq-item';
 
-    const a = document.createElement('div');
-    a.className = 'faq-answer';
-    a.id = `faq-answer-${i}`;
-    a.textContent = answer;
+    const question = document.createElement('div');
+    question.className = 'faq-question';
+    question.tabIndex = 0;
+    question.textContent = item.question;
+    faqItem.appendChild(question);
 
-    q.addEventListener('click', () => {
-      const isOpen = item.classList.toggle('open');
-      q.setAttribute('aria-expanded', isOpen);
+    const answer = document.createElement('div');
+    answer.className = 'faq-answer';
+    answer.textContent = item.answer;
+    faqItem.appendChild(answer);
+
+    question.addEventListener('click', () => {
+      faqItem.classList.toggle('open');
     });
-    q.addEventListener('keydown', (e) => {
+
+    question.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        q.click();
+        faqItem.classList.toggle('open');
       }
     });
 
-    item.appendChild(q);
-    item.appendChild(a);
-    faqList.appendChild(item);
+    faqList.appendChild(faqItem);
   });
 }
 
-function init() {
-  currentYearEl.textContent = new Date().getFullYear();
-  fetchRates();
-  renderFaq();
-  updateConvertedAmount();
+function updateCurrentYear() {
+  if (currentYearEl) {
+    currentYearEl.textContent = new Date().getFullYear();
+  }
 }
 
-init();
+// Initialization
+fetchRates();
+renderFAQ();
+updateCurrentYear();
