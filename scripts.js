@@ -9,13 +9,13 @@ const ratesContainer = document.getElementById('rates-container');
 const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
 
-// Since we need searchable dropdowns, we will build custom dropdowns inside containers
+// Searchable dropdown inputs and dropdown containers
 const fromCurrencyInput = document.getElementById('from-currency-input');
 const toCurrencyInput = document.getElementById('to-currency-input');
 const fromDropdown = document.getElementById('from-currency-dropdown');
 const toDropdown = document.getElementById('to-currency-dropdown');
 
-let ratesData = {};
+let rates = {};
 let currencyNames = {
   AED: "UAE Dirham",
   AFN: "Afghan Afghani",
@@ -193,8 +193,6 @@ const currencyToCountryCode = {
   JPY: 'jp'
 };
 
-let rates = {};
-
 async function fetchRates() {
   try {
     const res = await fetch(API_BASE_URL);
@@ -217,7 +215,6 @@ function createDropdownItems(dropdown, onSelect) {
   dropdown.innerHTML = '';
   const fragment = document.createDocumentFragment();
 
-  // Sort currency codes alphabetically
   const sortedCurrencies = Object.keys(currencyNames).sort();
 
   sortedCurrencies.forEach(code => {
@@ -225,10 +222,20 @@ function createDropdownItems(dropdown, onSelect) {
     const item = document.createElement('div');
     item.classList.add('dropdown-item');
     item.dataset.code = code;
+    item.tabIndex = 0; // Make keyboard focusable
     item.textContent = `${code} - ${name}`;
     item.addEventListener('click', () => {
       onSelect(code);
       closeAllDropdowns();
+    });
+    // Support keyboard selection on dropdown items
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSelect(code);
+        closeAllDropdowns();
+        dropdown.previousElementSibling.focus();
+      }
     });
     fragment.appendChild(item);
   });
@@ -271,8 +278,9 @@ function toggleDropdown(dropdown) {
 
 // Initialize dropdown events
 function setupDropdown(container, input, dropdown, setFunc) {
-  // Open dropdown on input click
+  // Open dropdown on input click or focus
   input.addEventListener('focus', () => toggleDropdown(dropdown));
+  input.addEventListener('click', () => toggleDropdown(dropdown));
 
   // Filter items as user types
   input.addEventListener('input', () => {
@@ -287,7 +295,7 @@ function setupDropdown(container, input, dropdown, setFunc) {
     }
   });
 
-  // Keyboard navigation (optional: Enter to select)
+  // Keyboard navigation in input
   input.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -296,6 +304,7 @@ function setupDropdown(container, input, dropdown, setFunc) {
     }
   });
 
+  // Keyboard navigation in dropdown
   dropdown.addEventListener('keydown', (e) => {
     const visibleItems = Array.from(dropdown.querySelectorAll('.dropdown-item')).filter(i => i.style.display !== 'none');
     let idx = visibleItems.indexOf(document.activeElement);
@@ -331,6 +340,7 @@ function populateCurrencyDropdowns() {
   setToCurrency('USD');
 }
 
+// Update conversion display
 function updateConvertedAmount() {
   const amount = parseFloat(amountInput.value);
   const fromCur = fromCurrencyInput.value.trim().toUpperCase();
@@ -350,13 +360,14 @@ function updateConvertedAmount() {
   convertedAmountEl.textContent = `${formatted} ${toCur}`;
 }
 
+// Display rate cards, excluding CNY and JPY
 function displayLiveRates() {
   ratesContainer.innerHTML = '';
 
   const popularCurrencies = [
-    'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR',
+    'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'INR',
     'SAR', 'QAR', 'BHD', 'OMR', 'KWD', 'THB'
-  ];
+  ]; // CNY and JPY excluded
 
   popularCurrencies.forEach(cur => {
     if (!rates[cur]) return;
@@ -412,7 +423,7 @@ swapBtn.addEventListener('click', () => {
   updateConvertedAmount();
 });
 
-// Event listeners for inputs and amount
+// Event listeners for amount input and dropdown filtering
 amountInput.addEventListener('input', updateConvertedAmount);
 fromCurrencyInput.addEventListener('input', () => {
   filterDropdown(fromDropdown, fromCurrencyInput.value);
@@ -421,9 +432,7 @@ toCurrencyInput.addEventListener('input', () => {
   filterDropdown(toDropdown, toCurrencyInput.value);
 });
 
-// Close dropdowns on click outside handled inside setupDropdown
-
-// FAQ Data and render (unchanged)
+// FAQ Data and render function
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -435,7 +444,7 @@ const faqData = [
   },
   {
     question: "How often are the exchange rates updated?",
-    answer: " Rates are updated hourly based on global market data. Actual exchange rates at our office may differ."
+    answer: "Rates are updated hourly based on global market data. Actual exchange rates at our office may differ."
   },
   {
     question: "Are there any additional fees or commissions?",
@@ -488,20 +497,10 @@ function renderFAQ() {
 }
 
 // Setup dropdown behavior
-setupDropdown(
-  document.getElementById('from-currency-container'),
-  fromCurrencyInput,
-  fromDropdown,
-  setFromCurrency
-);
-setupDropdown(
-  document.getElementById('to-currency-container'),
-  toCurrencyInput,
-  toDropdown,
-  setToCurrency
-);
+setupDropdown(fromCurrencyContainer, fromCurrencyInput, fromDropdown, setFromCurrency);
+setupDropdown(toCurrencyContainer, toCurrencyInput, toDropdown, setToCurrency);
 
-// Initialize
+// Initialize everything
 fetchRates();
 renderFAQ();
 updateConvertedAmount();
