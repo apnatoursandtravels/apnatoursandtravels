@@ -14,7 +14,7 @@
   <nav class="navbar">
     <div class="container">
       <div class="logo">
-        <img src="images/logo.png" alt="Apna Tours & Travels Logo" height="60" style="margin-right: 10px;" />
+<img src="images/logo.png" alt="Apna Tours & Travels Logo" height="60" style="margin-right: 10px;" />
         <div>
           <div class="logo-text">Apna Tours & Travels</div>
           <div class="logo-subtext">Currency Exchange</div>
@@ -41,36 +41,20 @@
   <main class="container">
 
     <!-- Calculator Section -->
-    <section id="converter" class="calculator-box">
-      <h2 style="text-align: center; margin-bottom: 24px;">Currency Converter</h2>
-      <div class="calculator">
-
-        <!-- From Currency -->
-        <div id="from-currency-container" class="currency-select">
-          <label for="from-currency-input">From:</label>
-          <input type="text" id="from-currency-input" autocomplete="off" placeholder="Type or select currency" />
-          <div id="from-currency-dropdown" class="dropdown"></div>
-        </div>
-
-        <!-- Swap Button -->
-        <button id="swap-btn" title="Swap currencies">&#8646;</button>
-
-        <!-- To Currency -->
-        <div id="to-currency-container" class="currency-select">
-          <label for="to-currency-input">To:</label>
-          <input type="text" id="to-currency-input" autocomplete="off" placeholder="Type or select currency" />
-          <div id="to-currency-dropdown" class="dropdown"></div>
-        </div>
-
-        <!-- Amount Input -->
-        <div class="amount-input">
-          <label for="amount">Amount:</label>
-          <input type="number" id="amount" value="1" min="0" />
-        </div>
-
+    <section id="converter" class="calculator">
+      <div class="currency-select">
+        <label for="from-currency">From:</label>
+        <select id="from-currency"></select>
       </div>
-
-      <!-- Converted Result -->
+      <div class="currency-select">
+        <label for="to-currency">To:</label>
+        <select id="to-currency"></select>
+      </div>
+      <div class="amount-input">
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" value="1" min="0" />
+      </div>
+      <button id="swap-btn" title="Swap currencies">&#8646;</button>
       <div class="converted-result">
         <p>Converted Amount:</p>
         <p id="converted-amount">-</p>
@@ -79,12 +63,12 @@
 
     <!-- Live Rates Section -->
     <section id="rates">
-      <h2 style="text-align: center;">Live INR Exchange Rates</h2>
+      <h2>Live INR Exchange Rates</h2>
       <div id="rates-container" class="rates-cards"></div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="faq-section">
+    <section id="faq" class="container faq-section">
       <h2>Frequently Asked Questions</h2>
       <p>Find answers to common questions about currency exchange and our services.</p>
       <div class="faq-list" id="faqList"></div>
@@ -101,17 +85,17 @@
     <div class="container footer-grid">
       <div>
         <div class="footer-logo">
-          <img src="images/logo.png" alt="Apna Tours & Travels Logo" height="40" style="margin-right: 10px;" />
+<img src="images/logo.png" alt="Apna Tours & Travels Logo" height="40" style="margin-right: 10px;" />
           <div>
             <div class="logo-text">Apna Tours & Travels</div>
             <div class="logo-subtext">Currency Exchange</div>
           </div>
         </div>
         <p class="footer-description">
-          Providing foreign currency exchange services since 2002.<br />
-          RBI Authorized<br />
-          License No.: <strong>PAT-FFMC-0062-2023</strong><br />
-          <strong>Abid Ayub – Director</strong><br />
+ Providing foreign currency exchange services since 2002.<br />
+  RBI Authorized<br />
+  License No.: <strong>PAT-FFMC-0062-2023</strong><br />
+  <strong>Abid Ayub – Director</strong><br />
           <span id="datetime"></span>
         </p>
         <div class="social-icons"></div>
@@ -144,10 +128,9 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="scripts.js"></script>
   <script>
-    // Set current year
+    // Update current year
     document.getElementById("currentYear").textContent = new Date().getFullYear();
 
     // Set current date and time
