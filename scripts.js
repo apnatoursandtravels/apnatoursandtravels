@@ -251,7 +251,8 @@ function updateConvertedAmount() {
 
   const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
   // Show converted amount with currency code e.g., "7 USD"
-  convertedAmountEl.textContent = `${converted.toFixed(4)} ${toCur}`;
+const formatted = converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+convertedAmountEl.textContent = `${formatted} ${toCur}`;
 }
 
 function displayLiveRates(rates) {
