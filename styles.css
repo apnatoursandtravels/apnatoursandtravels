@@ -183,7 +183,7 @@ button:active {
 .currency-select {
   display: flex;
   flex-direction: column;
-  width: 240px; /* Increased from 180px to 240px */
+  width: 300px; /* Increased from 180px to 240px */
 }
 
 .currency-select label {
