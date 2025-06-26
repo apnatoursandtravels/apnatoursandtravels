@@ -7,6 +7,7 @@
   --green: #10b981;
   --purple: #8b5cf6;
   --amber: #f59e0b;
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -20,38 +21,16 @@ body {
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Container for page content */
 .container {
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 16px;
-}
-
-h1, h2, h3 {
-  margin-top: 0;
-}
-
-a {
-  text-decoration: none;
-  color: var(--blue);
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  color: #2563eb;
-}
-
-button {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  background: none;
-  font-family: inherit;
-}
-
-button:active {
-  transform: scale(0.98);
 }
 
 /* Navbar */
@@ -93,13 +72,12 @@ button:active {
 }
 
 .logo-subtext {
-  margin-top: 6px;          /* add space below main logo text */
-  color: var(--blue);       /* use your defined blue color */
-  font-size: 1rem;          /* bigger font size than before */
-  line-height: 1.2rem;      /* adjust line height nicely */
-  font-weight: 600;         /* slightly bolder for better readability */
+  margin-top: 6px;
+  color: var(--blue);
+  font-size: 1rem;
+  line-height: 1.2rem;
+  font-weight: 600;
 }
-
 
 .nav-links {
   list-style: none;
@@ -125,7 +103,7 @@ button:active {
   padding: 80px 16px;
   text-align: center;
   color: white;
-  background-image: url('images/indian-flag.jpg'); /* <-- Replace with your image path */
+  background-image: url('images/indian-flag.jpg'); /* Replace with your image path */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -155,12 +133,13 @@ button:active {
   margin-bottom: 32px;
 }
 
-/* Updated to replace 'Reliable' with 'Foreign' in the hero paragraph */
-/* You can also update the HTML text directly */
+/* Updated to replace 'Reliable' with 'Foreign' in hero paragraph */
+/* Update your HTML accordingly */
 
+/* Buttons */
 .btn-primary {
   background-color: white;
-  color: #3b82f6;
+  color: var(--blue);
   padding: 12px 28px;
   font-weight: 700;
   border-radius: 8px;
@@ -172,75 +151,137 @@ button:active {
   background-color: #dbeafe;
 }
 
-/* Calculator Section */
-.calculator {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  padding: 32px 0;
-  justify-content: center;
-}
-
-.currency-select {
+/* ------------------------ */
+/* CALCULATOR WRAPPER - boxed and centered */
+/* ------------------------ */
+.calculator-wrapper {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  width: 300px; /* Increased from 180px to 240px */
+  align-items: center;
+}
+
+/* Calculator container */
+.calculator {
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+/* Currency select blocks */
+.currency-select {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .currency-select label {
   font-weight: 700;
-  font-size: 1.125rem; /* Increased font size */
+  font-size: 1.125rem;
   margin-bottom: 6px;
 }
 
-.currency-select select {
-  padding: 8px 12px;
-  font-size: 1.25rem;
+/* Search input for dropdown */
+.currency-select input[type="text"] {
+  padding: 10px 14px;
+  font-size: 1.1rem;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  transition: box-shadow 0.3s ease;
+  border: 1.5px solid #cbd5e1;
+  outline-offset: 2px;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.currency-select select:focus {
+.currency-select input[type="text"]:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  border-color: #3b82f6;
 }
 
-.currency-select select:disabled {
-  background-color: #e5e7eb;
-  color: #64748b;
-  cursor: not-allowed;
+/* Dropdown container */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 10;
+  display: none; /* hidden by default */
 }
 
+/* Open dropdown */
+.dropdown.open {
+  display: block;
+}
+
+/* Dropdown items */
+.dropdown-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--blue);
+  color: white;
+  outline: none;
+}
+
+/* Amount input container */
 .amount-input {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  width: 240px; /* Increased from 180px to 240px */
 }
 
 .amount-input label {
   font-weight: 700;
-  font-size: 1.125rem; /* Increased font size */
+  font-size: 1.125rem;
   margin-bottom: 6px;
 }
 
 .amount-input input[type="number"] {
-  padding: 8px 12px;
+  padding: 10px 14px;
   font-size: 1.25rem;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  transition: box-shadow 0.3s ease;
+  border: 1.5px solid #cbd5e1;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .amount-input input[type="number"]:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  border-color: #3b82f6;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
-
+/* Swap Button */
 #swap-btn {
   font-size: 1.75rem;
   background: var(--blue);
@@ -254,18 +295,21 @@ button:active {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  margin-top: 24px;
+  margin-left: 12px;
+  margin-bottom: 24px;
   flex-shrink: 0;
+  user-select: none;
 }
 
 #swap-btn:hover {
   background-color: #2563eb;
 }
 
+/* Converted Result */
 .converted-result {
-  flex: 1 1 100%;
   margin-top: 24px;
   text-align: center;
+  flex: 1 1 100%;
 }
 
 .converted-result p:first-child {
@@ -287,9 +331,7 @@ button:active {
   overflow-x: auto;
 }
 
-/* Removed old table styles, replaced with cards below */
-
-/* New: Rates cards container */
+/* Rates cards container */
 .rates-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -573,12 +615,43 @@ button:active {
   .hero-content p {
     font-size: 1rem;
   }
+
+  /* Center calculator vertically and horizontally on small screens */
+  body {
+    justify-content: center;
+  }
+  
+  .calculator-wrapper {
+    margin: 20px;
+    padding: 24px;
+    max-width: 100%;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
+
   .calculator {
     flex-direction: column;
     align-items: stretch;
   }
+
+  /* Swap button centered and margin adjusted */
   #swap-btn {
+    margin: 16px auto 24px auto;
     align-self: center;
-    margin: 16px 0;
+  }
+
+  /* Fullscreen dropdown on mobile */
+  .dropdown {
+    position: fixed !important;
+    top: 56px; /* below navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background: white;
+    z-index: 10000;
+    overflow-y: auto;
   }
 }
