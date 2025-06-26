@@ -119,10 +119,27 @@ button:active {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
-  color: white;
+  position: relative;
   padding: 80px 16px;
   text-align: center;
+  color: white;
+  background-image: url('images/indian-flag.png'); /* <-- Replace with your image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* dark overlay for text readability */
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-content h1 {
@@ -135,6 +152,9 @@ button:active {
   font-size: 1.125rem;
   margin-bottom: 32px;
 }
+
+/* Updated to replace 'Reliable' with 'Foreign' in the hero paragraph */
+/* You can also update the HTML text directly */
 
 .btn-primary {
   background-color: white;
@@ -174,7 +194,7 @@ button:active {
 
 .currency-select select {
   padding: 8px 12px;
-  font-size: 1rem;
+  font-size: 1.25rem; /* Increased font size for calculator */
   border-radius: 8px;
   border: 1px solid #cbd5e1;
   transition: box-shadow 0.3s ease;
@@ -206,7 +226,7 @@ button:active {
 
 .amount-input input[type="number"] {
   padding: 8px 12px;
-  font-size: 1rem;
+  font-size: 1.25rem; /* Increased font size for calculator */
   border-radius: 8px;
   border: 1px solid #cbd5e1;
   transition: box-shadow 0.3s ease;
@@ -320,7 +340,6 @@ button:active {
   font-size: 1.1rem;
   color: var(--green);
 }
-
 
 /* FAQ Section */
 .faq-section {
