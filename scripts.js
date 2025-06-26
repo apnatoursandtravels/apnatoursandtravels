@@ -2,16 +2,21 @@ const API_BASE_URL = 'https://v6.exchangerate-api.com/v6/f782350a3b382aa55ff058a
 
 // DOM elements
 const amountInput = document.getElementById('amount');
-const fromCurrency = document.getElementById('from-currency');
-const toCurrency = document.getElementById('to-currency');
+const fromCurrencyContainer = document.getElementById('from-currency-container');
+const toCurrencyContainer = document.getElementById('to-currency-container');
 const convertedAmountEl = document.getElementById('converted-amount');
 const ratesContainer = document.getElementById('rates-container');
 const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
-const currentYearEl = document.getElementById('currentYear');
 
-// Currency names for display (full list including requested currencies)
-const currencyNames = {
+// Since we need searchable dropdowns, we will build custom dropdowns inside containers
+const fromCurrencyInput = document.getElementById('from-currency-input');
+const toCurrencyInput = document.getElementById('to-currency-input');
+const fromDropdown = document.getElementById('from-currency-dropdown');
+const toDropdown = document.getElementById('to-currency-dropdown');
+
+let ratesData = {};
+let currencyNames = {
   AED: "UAE Dirham",
   AFN: "Afghan Afghani",
   ALL: "Albanian Lek",
@@ -41,7 +46,7 @@ const currencyNames = {
   CAD: "Canadian Dollar",
   CDF: "Congolese Franc",
   CHF: "Swiss Franc",
-  // Removed CNY (Chinese Yuan)
+  CNY: "Chinese Yuan",
   CLP: "Chilean Peso",
   COP: "Colombian Peso",
   CRC: "Costa Rican Colón",
@@ -80,7 +85,7 @@ const currencyNames = {
   ISK: "Icelandic Króna",
   JMD: "Jamaican Dollar",
   JOD: "Jordanian Dinar",
-  // Removed JPY (Japanese Yen)
+  JPY: "Japanese Yen",
   KES: "Kenyan Shilling",
   KGS: "Kyrgystani Som",
   KHR: "Cambodian Riel",
@@ -169,98 +174,187 @@ const currencyNames = {
   ZWL: "Zimbabwean Dollar"
 };
 
-// Currency code to flag (added new countries)
+// Currency code to flag (add your desired mappings)
 const currencyToCountryCode = {
   USD: 'us',
   EUR: '',
   GBP: 'gb',
-  // Removed JPY and CNY flags since removed
   AUD: 'au',
   CAD: 'ca',
   CHF: 'ch',
   INR: 'in',
-  SAR: 'sa',   // Saudi Arabia
-  QAR: 'qa',   // Qatar
-  BHD: 'bh',   // Bahrain
-  OMR: 'om',   // Oman
-  KWD: 'kw',   // Kuwait
-  THB: 'th'    // Thailand
+  SAR: 'sa',
+  QAR: 'qa',
+  BHD: 'bh',
+  OMR: 'om',
+  KWD: 'kw',
+  THB: 'th',
+  CNY: 'cn',
+  JPY: 'jp'
 };
 
-let ratesData = {};
+let rates = {};
 
 async function fetchRates() {
   try {
-    const response = await fetch(API_BASE_URL);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const data = await response.json();
-    if (!data.conversion_rates) throw new Error('Invalid rates data');
+    const res = await fetch(API_BASE_URL);
+    if (!res.ok) throw new Error('Failed to fetch rates');
+    const data = await res.json();
+    if (!data.conversion_rates) throw new Error('Invalid data format');
+    rates = data.conversion_rates;
 
-    ratesData = data.conversion_rates;
-
-    populateCurrencySelectors(ratesData);
-    displayLiveRates(ratesData);
+    populateCurrencyDropdowns();
+    displayLiveRates();
     updateConvertedAmount();
-  } catch (error) {
-    console.error('Error fetching exchange rates:', error);
-    ratesContainer.textContent = 'Failed to load exchange rates. Please try again later.';
+  } catch (e) {
+    console.error(e);
+    ratesContainer.textContent = "Failed to load rates. Please try again later.";
   }
 }
 
-function populateCurrencySelectors(rates) {
-  fromCurrency.innerHTML = '';
-  toCurrency.innerHTML = '';
+// Build searchable dropdown items
+function createDropdownItems(dropdown, onSelect) {
+  dropdown.innerHTML = '';
+  const fragment = document.createDocumentFragment();
 
-  // Remove CNY and JPY
-  const currencies = Object.keys(rates)
-    .filter(cur => cur !== 'CNY' && cur !== 'JPY') 
-    .sort();
+  // Sort currency codes alphabetically
+  const sortedCurrencies = Object.keys(currencyNames).sort();
 
-  currencies.forEach(cur => {
-    const name = currencyNames[cur] || 'Unknown Currency';
-
-    const optionFrom = document.createElement('option');
-    optionFrom.value = cur;
-    optionFrom.textContent = `${cur} - ${name}`;
-    fromCurrency.appendChild(optionFrom);
-
-    const optionTo = document.createElement('option');
-    optionTo.value = cur;
-    optionTo.textContent = `${cur} - ${name}`;
-    toCurrency.appendChild(optionTo);
+  sortedCurrencies.forEach(code => {
+    const name = currencyNames[code];
+    const item = document.createElement('div');
+    item.classList.add('dropdown-item');
+    item.dataset.code = code;
+    item.textContent = `${code} - ${name}`;
+    item.addEventListener('click', () => {
+      onSelect(code);
+      closeAllDropdowns();
+    });
+    fragment.appendChild(item);
   });
 
-  fromCurrency.value = 'INR';
-  toCurrency.value = 'USD';
+  dropdown.appendChild(fragment);
+}
+
+// Set input value and update conversion when selection changes
+function setFromCurrency(code) {
+  fromCurrencyInput.value = code;
+  updateConvertedAmount();
+}
+function setToCurrency(code) {
+  toCurrencyInput.value = code;
+  updateConvertedAmount();
+}
+
+// Filter dropdown items based on search text
+function filterDropdown(dropdown, query) {
+  const items = dropdown.querySelectorAll('.dropdown-item');
+  const q = query.trim().toLowerCase();
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// Close dropdowns on outside click
+function closeAllDropdowns() {
+  fromDropdown.classList.remove('open');
+  toDropdown.classList.remove('open');
+}
+
+// Toggle dropdown visibility
+function toggleDropdown(dropdown) {
+  const isOpen = dropdown.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) dropdown.classList.add('open');
+}
+
+// Initialize dropdown events
+function setupDropdown(container, input, dropdown, setFunc) {
+  // Open dropdown on input click
+  input.addEventListener('focus', () => toggleDropdown(dropdown));
+
+  // Filter items as user types
+  input.addEventListener('input', () => {
+    filterDropdown(dropdown, input.value);
+    if (!dropdown.classList.contains('open')) dropdown.classList.add('open');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!container.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  // Keyboard navigation (optional: Enter to select)
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const visibleItems = Array.from(dropdown.querySelectorAll('.dropdown-item')).filter(i => i.style.display !== 'none');
+      if (visibleItems.length) visibleItems[0].focus();
+    }
+  });
+
+  dropdown.addEventListener('keydown', (e) => {
+    const visibleItems = Array.from(dropdown.querySelectorAll('.dropdown-item')).filter(i => i.style.display !== 'none');
+    let idx = visibleItems.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      idx = (idx + 1) % visibleItems.length;
+      visibleItems[idx].focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      idx = (idx - 1 + visibleItems.length) % visibleItems.length;
+      visibleItems[idx].focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (document.activeElement.classList.contains('dropdown-item')) {
+        const code = document.activeElement.dataset.code;
+        setFunc(code);
+        closeAllDropdowns();
+        input.focus();
+      }
+    } else if (e.key === 'Escape') {
+      closeAllDropdowns();
+      input.focus();
+    }
+  });
+}
+
+// Populate the dropdowns with currency items and set default values
+function populateCurrencyDropdowns() {
+  createDropdownItems(fromDropdown, setFromCurrency);
+  createDropdownItems(toDropdown, setToCurrency);
+
+  setFromCurrency('INR');
+  setToCurrency('USD');
 }
 
 function updateConvertedAmount() {
   const amount = parseFloat(amountInput.value);
-  if (isNaN(amount) || amount < 0) {
+  const fromCur = fromCurrencyInput.value.trim().toUpperCase();
+  const toCur = toCurrencyInput.value.trim().toUpperCase();
+
+  if (isNaN(amount) || amount <= 0) {
+    convertedAmountEl.textContent = '-';
+    return;
+  }
+  if (!rates[fromCur] || !rates[toCur]) {
     convertedAmountEl.textContent = '-';
     return;
   }
 
-  const fromCur = fromCurrency.value;
-  const toCur = toCurrency.value;
-
-  if (!ratesData[fromCur] || !ratesData[toCur]) {
-    convertedAmountEl.textContent = '-';
-    return;
-  }
-
-  const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
-  // Show converted amount with currency code e.g., "7 USD"
-const formatted = converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-convertedAmountEl.textContent = `${formatted} ${toCur}`;
+  const converted = amount * (rates[toCur] / rates[fromCur]);
+  const formatted = converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  convertedAmountEl.textContent = `${formatted} ${toCur}`;
 }
 
-function displayLiveRates(rates) {
+function displayLiveRates() {
   ratesContainer.innerHTML = '';
 
-  // Popular currencies list — removing CNY and JPY, adding your requested countries
   const popularCurrencies = [
-    'USD', 'EUR', 'GBP', /* 'JPY', */ 'AUD', 'CAD', 'CHF', /* 'CNY', */ 'INR',
+    'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR',
     'SAR', 'QAR', 'BHD', 'OMR', 'KWD', 'THB'
   ];
 
@@ -270,9 +364,9 @@ function displayLiveRates(rates) {
     const card = document.createElement('div');
     card.className = 'rate-card';
 
+    // Flag icon or fallback text
     const flagCode = currencyToCountryCode[cur];
     const flagDiv = document.createElement('div');
-
     if (flagCode) {
       flagDiv.className = `fi fi-${flagCode}`;
     } else {
@@ -280,7 +374,6 @@ function displayLiveRates(rates) {
       flagDiv.style.fontWeight = '700';
       flagDiv.style.fontSize = '20px';
     }
-
     card.appendChild(flagDiv);
 
     const codeDiv = document.createElement('div');
@@ -295,35 +388,42 @@ function displayLiveRates(rates) {
 
     const rateDiv = document.createElement('div');
     rateDiv.className = 'currency-rate';
-    // Show rate as "1 INR = [rate]"
     rateDiv.textContent = `1 INR = ${rates[cur].toFixed(4)}`;
     card.appendChild(rateDiv);
 
+    // Click card to auto-select in dropdown
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      setFromCurrency('INR');
+      setToCurrency(cur);
+      updateConvertedAmount();
+    });
+
     ratesContainer.appendChild(card);
-
-    // Make rate card clickable to auto-fill dropdowns
-card.style.cursor = 'pointer';
-card.addEventListener('click', () => {
-  fromCurrency.value = 'INR';
-  toCurrency.value = cur;
-  updateConvertedAmount();
-});
-
   });
 }
 
+// Swap button functionality
 swapBtn.addEventListener('click', () => {
-  const temp = fromCurrency.value;
-  fromCurrency.value = toCurrency.value;
-  toCurrency.value = temp;
-
+  const fromVal = fromCurrencyInput.value;
+  const toVal = toCurrencyInput.value;
+  setFromCurrency(toVal);
+  setToCurrency(fromVal);
   updateConvertedAmount();
 });
 
+// Event listeners for inputs and amount
 amountInput.addEventListener('input', updateConvertedAmount);
-fromCurrency.addEventListener('change', updateConvertedAmount);
-toCurrency.addEventListener('change', updateConvertedAmount);
+fromCurrencyInput.addEventListener('input', () => {
+  filterDropdown(fromDropdown, fromCurrencyInput.value);
+});
+toCurrencyInput.addEventListener('input', () => {
+  filterDropdown(toDropdown, toCurrencyInput.value);
+});
 
+// Close dropdowns on click outside handled inside setupDropdown
+
+// FAQ Data and render (unchanged)
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -357,8 +457,7 @@ const faqData = [
 
 function renderFAQ() {
   faqList.innerHTML = '';
-
-  faqData.forEach((item, index) => {
+  faqData.forEach((item) => {
     const faqItem = document.createElement('div');
     faqItem.className = 'faq-item';
 
@@ -388,13 +487,21 @@ function renderFAQ() {
   });
 }
 
-function updateCurrentYear() {
-  if (currentYearEl) {
-    currentYearEl.textContent = new Date().getFullYear();
-  }
-}
+// Setup dropdown behavior
+setupDropdown(
+  document.getElementById('from-currency-container'),
+  fromCurrencyInput,
+  fromDropdown,
+  setFromCurrency
+);
+setupDropdown(
+  document.getElementById('to-currency-container'),
+  toCurrencyInput,
+  toDropdown,
+  setToCurrency
+);
 
-// Initialization
+// Initialize
 fetchRates();
 renderFAQ();
-updateCurrentYear();
+updateConvertedAmount();
