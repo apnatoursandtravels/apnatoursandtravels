@@ -317,7 +317,7 @@ toCurrency.addEventListener('change', updateConvertedAmount);
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
-    answer: "You can use our currency converter to check rates and then visit our office or order online."
+    answer: "You can use our currency converter to check rates and then visit our office."
   },
   {
     question: "What currencies do you support?",
@@ -325,7 +325,7 @@ const faqData = [
   },
   {
     question: "How often are the exchange rates updated?",
-    answer: "Rates are updated every hour based on global market data."
+    answer: " Rates are updated hourly based on global market data. Actual exchange rates at our office may differ."
   },
   {
     question: "Are there any additional fees or commissions?",
@@ -333,11 +333,11 @@ const faqData = [
   },
   {
     question: "How can I contact customer support?",
-    answer: "You can reach us at info@apnatravels.com or call +91 98765 43210 during business hours."
+    answer: "You can reach us at smabidayub@gmail.com or call +91 94314 92354 during business hours."
   },
   {
     question: "Do you offer delivery services?",
-    answer: "Yes, we provide both delivery and in-person services for your convenience."
+    answer: "Yes, we provide both delivery within Patna and in-person services for your convenience."
   },
   {
     question: "What documents are required to exchange currency?",
