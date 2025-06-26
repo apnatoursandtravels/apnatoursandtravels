@@ -93,11 +93,13 @@ button:active {
 }
 
 .logo-subtext {
-  font-size: 0.75rem;
-  color: #f97316;
-  line-height: 1rem;
-  margin-top: -4px;
+  margin-top: 6px;          /* add space below main logo text */
+  color: var(--blue);       /* use your defined blue color */
+  font-size: 1rem;          /* bigger font size than before */
+  line-height: 1.2rem;      /* adjust line height nicely */
+  font-weight: 600;         /* slightly bolder for better readability */
 }
+
 
 .nav-links {
   list-style: none;
