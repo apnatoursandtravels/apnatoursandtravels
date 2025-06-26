@@ -1,235 +1,329 @@
 const API_BASE_URL = 'https://v6.exchangerate-api.com/v6/f782350a3b382aa55ff058a3/latest/INR';
 
-// DOM Elements
+// DOM elements
 const amountInput = document.getElementById('amount');
-const fromCurrencyContainer = document.getElementById('from-currency-container');
-const toCurrencyContainer = document.getElementById('to-currency-container');
+const fromCurrency = document.getElementById('from-currency');
+const toCurrency = document.getElementById('to-currency');
 const convertedAmountEl = document.getElementById('converted-amount');
 const ratesContainer = document.getElementById('rates-container');
 const faqList = document.getElementById('faqList');
 const swapBtn = document.getElementById('swap-btn');
+const currentYearEl = document.getElementById('currentYear');
 
-const fromCurrencyInput = document.getElementById('from-currency-input');
-const toCurrencyInput = document.getElementById('to-currency-input');
-const fromDropdown = document.getElementById('from-currency-dropdown');
-const toDropdown = document.getElementById('to-currency-dropdown');
+// Currency names for display (full list including requested currencies)
+const currencyNames = {
+  AED: "UAE Dirham",
+  AFN: "Afghan Afghani",
+  ALL: "Albanian Lek",
+  AMD: "Armenian Dram",
+  ANG: "Netherlands Antillean Guilder",
+  AOA: "Angolan Kwanza",
+  ARS: "Argentine Peso",
+  AUD: "Australian Dollar",
+  AWG: "Aruban Florin",
+  AZN: "Azerbaijani Manat",
+  BAM: "Bosnia-Herzegovina Convertible Mark",
+  BBD: "Barbadian Dollar",
+  BDT: "Bangladeshi Taka",
+  BGN: "Bulgarian Lev",
+  BHD: "Bahraini Dinar",
+  BIF: "Burundian Franc",
+  BMD: "Bermudian Dollar",
+  BND: "Brunei Dollar",
+  BOB: "Bolivian Boliviano",
+  BRL: "Brazilian Real",
+  BSD: "Bahamian Dollar",
+  BTC: "Bitcoin",
+  BTN: "Bhutanese Ngultrum",
+  BWP: "Botswanan Pula",
+  BYN: "Belarusian Ruble",
+  BZD: "Belize Dollar",
+  CAD: "Canadian Dollar",
+  CDF: "Congolese Franc",
+  CHF: "Swiss Franc",
+  // Removed CNY (Chinese Yuan)
+  CLP: "Chilean Peso",
+  COP: "Colombian Peso",
+  CRC: "Costa Rican Colón",
+  CUC: "Cuban Convertible Peso",
+  CUP: "Cuban Peso",
+  CVE: "Cape Verdean Escudo",
+  CZK: "Czech Republic Koruna",
+  DJF: "Djiboutian Franc",
+  DKK: "Danish Krone",
+  DOP: "Dominican Peso",
+  DZD: "Algerian Dinar",
+  EGP: "Egyptian Pound",
+  ERN: "Eritrean Nakfa",
+  ETB: "Ethiopian Birr",
+  EUR: "Euro",
+  FJD: "Fijian Dollar",
+  FKP: "Falkland Islands Pound",
+  GBP: "British Pound Sterling",
+  GEL: "Georgian Lari",
+  GHS: "Ghanaian Cedi",
+  GIP: "Gibraltar Pound",
+  GMD: "Gambian Dalasi",
+  GNF: "Guinean Franc",
+  GTQ: "Guatemalan Quetzal",
+  GYD: "Guyanaese Dollar",
+  HKD: "Hong Kong Dollar",
+  HNL: "Honduran Lempira",
+  HRK: "Croatian Kuna",
+  HTG: "Haitian Gourde",
+  HUF: "Hungarian Forint",
+  IDR: "Indonesian Rupiah",
+  ILS: "Israeli New Sheqel",
+  INR: "Indian Rupee",
+  IQD: "Iraqi Dinar",
+  IRR: "Iranian Rial",
+  ISK: "Icelandic Króna",
+  JMD: "Jamaican Dollar",
+  JOD: "Jordanian Dinar",
+  // Removed JPY (Japanese Yen)
+  KES: "Kenyan Shilling",
+  KGS: "Kyrgystani Som",
+  KHR: "Cambodian Riel",
+  KMF: "Comorian Franc",
+  KPW: "North Korean Won",
+  KRW: "South Korean Won",
+  KWD: "Kuwaiti Dinar",
+  KYD: "Cayman Islands Dollar",
+  KZT: "Kazakhstani Tenge",
+  LAK: "Laotian Kip",
+  LBP: "Lebanese Pound",
+  LKR: "Sri Lankan Rupee",
+  LRD: "Liberian Dollar",
+  LSL: "Lesotho Loti",
+  LYD: "Libyan Dinar",
+  MAD: "Moroccan Dirham",
+  MDL: "Moldovan Leu",
+  MGA: "Malagasy Ariary",
+  MKD: "Macedonian Denar",
+  MMK: "Myanma Kyat",
+  MNT: "Mongolian Tugrik",
+  MOP: "Macanese Pataca",
+  MRU: "Mauritanian Ouguiya",
+  MUR: "Mauritian Rupee",
+  MVR: "Maldivian Rufiyaa",
+  MWK: "Malawian Kwacha",
+  MXN: "Mexican Peso",
+  MYR: "Malaysian Ringgit",
+  MZN: "Mozambican Metical",
+  NAD: "Namibian Dollar",
+  NGN: "Nigerian Naira",
+  NIO: "Nicaraguan Córdoba",
+  NOK: "Norwegian Krone",
+  NPR: "Nepalese Rupee",
+  NZD: "New Zealand Dollar",
+  OMR: "Omani Rial",
+  PAB: "Panamanian Balboa",
+  PEN: "Peruvian Nuevo Sol",
+  PGK: "Papua New Guinean Kina",
+  PHP: "Philippine Peso",
+  PKR: "Pakistani Rupee",
+  PLN: "Polish Zloty",
+  PYG: "Paraguayan Guarani",
+  QAR: "Qatari Rial",
+  RON: "Romanian Leu",
+  RSD: "Serbian Dinar",
+  RUB: "Russian Ruble",
+  RWF: "Rwandan Franc",
+  SAR: "Saudi Riyal",
+  SBD: "Solomon Islands Dollar",
+  SCR: "Seychellois Rupee",
+  SDG: "Sudanese Pound",
+  SEK: "Swedish Krona",
+  SGD: "Singapore Dollar",
+  SHP: "Saint Helena Pound",
+  SLL: "Sierra Leonean Leone",
+  SOS: "Somali Shilling",
+  SRD: "Surinamese Dollar",
+  STN: "São Tomé and Príncipe Dobra",
+  SYP: "Syrian Pound",
+  SZL: "Swazi Lilangeni",
+  THB: "Thai Baht",
+  TJS: "Tajikistani Somoni",
+  TMT: "Turkmenistani Manat",
+  TND: "Tunisian Dinar",
+  TRY: "Turkish Lira",
+  TTD: "Trinidad and Tobago Dollar",
+  TWD: "New Taiwan Dollar",
+  TZS: "Tanzanian Shilling",
+  UAH: "Ukrainian Hryvnia",
+  UGX: "Ugandan Shilling",
+  USD: "United States Dollar",
+  UYU: "Uruguayan Peso",
+  UZS: "Uzbekistani Som",
+  VES: "Venezuelan Bolívar",
+  VND: "Vietnamese Dong",
+  VUV: "Vanuatu Vatu",
+  WST: "Samoan Tala",
+  XAF: "Central African CFA Franc",
+  XCD: "East Caribbean Dollar",
+  XOF: "West African CFA franc",
+  XPF: "CFP Franc",
+  YER: "Yemeni Rial",
+  ZAR: "South African Rand",
+  ZMW: "Zambian Kwacha",
+  ZWL: "Zimbabwean Dollar"
+};
 
-let rates = {};
-
-// Add more mappings as needed
+// Currency code to flag (added new countries)
 const currencyToCountryCode = {
   USD: 'us',
-  EUR: 'eu',
+  EUR: '',
   GBP: 'gb',
+  // Removed JPY and CNY flags since removed
   AUD: 'au',
   CAD: 'ca',
   CHF: 'ch',
   INR: 'in',
-  SAR: 'sa',
-  QAR: 'qa',
-  BHD: 'bh',
-  OMR: 'om',
-  KWD: 'kw',
-  THB: 'th'
+  SAR: 'sa',   // Saudi Arabia
+  QAR: 'qa',   // Qatar
+  BHD: 'bh',   // Bahrain
+  OMR: 'om',   // Oman
+  KWD: 'kw',   // Kuwait
+  THB: 'th'    // Thailand
 };
 
-// === Functions ===
+let ratesData = {};
 
 async function fetchRates() {
   try {
-    const res = await fetch(API_BASE_URL);
-    if (!res.ok) throw new Error('Failed to fetch rates');
-    const data = await res.json();
-    if (!data.conversion_rates) throw new Error('Invalid data format');
-    rates = data.conversion_rates;
+    const response = await fetch(API_BASE_URL);
+    if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+    const data = await response.json();
+    if (!data.conversion_rates) throw new Error('Invalid rates data');
 
-    populateCurrencyDropdowns();
-    displayLiveRates();
+    ratesData = data.conversion_rates;
+
+    populateCurrencySelectors(ratesData);
+    displayLiveRates(ratesData);
     updateConvertedAmount();
-  } catch (e) {
-    console.error(e);
-    ratesContainer.textContent = "Failed to load rates. Please try again later.";
+  } catch (error) {
+    console.error('Error fetching exchange rates:', error);
+    ratesContainer.textContent = 'Failed to load exchange rates. Please try again later.';
   }
 }
 
-function createDropdownItems(dropdown, onSelect) {
-  dropdown.innerHTML = '';
-  const fragment = document.createDocumentFragment();
+function populateCurrencySelectors(rates) {
+  fromCurrency.innerHTML = '';
+  toCurrency.innerHTML = '';
 
-  const sorted = Object.keys(currencyNames).sort();
+  // Remove CNY and JPY
+  const currencies = Object.keys(rates)
+    .filter(cur => cur !== 'CNY' && cur !== 'JPY') 
+    .sort();
 
-  sorted.forEach(code => {
-    const item = document.createElement('div');
-    item.className = 'dropdown-item';
-    item.textContent = `${code} - ${currencyNames[code]}`;
-    item.dataset.code = code;
-    item.tabIndex = 0;
+  currencies.forEach(cur => {
+    const name = currencyNames[cur] || 'Unknown Currency';
 
-    item.addEventListener('click', () => {
-      onSelect(code);
-      closeAllDropdowns();
-    });
+    const optionFrom = document.createElement('option');
+    optionFrom.value = cur;
+    optionFrom.textContent = ${cur} - ${name};
+    fromCurrency.appendChild(optionFrom);
 
-    item.addEventListener('keydown', (e) => {
-      if (['Enter', ' '].includes(e.key)) {
-        e.preventDefault();
-        onSelect(code);
-        closeAllDropdowns();
-        dropdown.previousElementSibling.focus();
-      }
-    });
-
-    fragment.appendChild(item);
+    const optionTo = document.createElement('option');
+    optionTo.value = cur;
+    optionTo.textContent = ${cur} - ${name};
+    toCurrency.appendChild(optionTo);
   });
 
-  dropdown.appendChild(fragment);
-}
-
-function setFromCurrency(code) {
-  fromCurrencyInput.value = code;
-  updateConvertedAmount();
-}
-function setToCurrency(code) {
-  toCurrencyInput.value = code;
-  updateConvertedAmount();
-}
-
-function filterDropdown(dropdown, query) {
-  const items = dropdown.querySelectorAll('.dropdown-item');
-  const q = query.trim().toLowerCase();
-  items.forEach(item => {
-    item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-function closeAllDropdowns() {
-  fromDropdown.classList.remove('open');
-  toDropdown.classList.remove('open');
-}
-
-function toggleDropdown(dropdown) {
-  const isOpen = dropdown.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) dropdown.classList.add('open');
-}
-
-function setupDropdown(container, input, dropdown, setFunc) {
-  input.addEventListener('focus', () => toggleDropdown(dropdown));
-  input.addEventListener('click', () => toggleDropdown(dropdown));
-  input.addEventListener('input', () => {
-    filterDropdown(dropdown, input.value);
-    dropdown.classList.add('open');
-  });
-  document.addEventListener('click', (e) => {
-    if (!container.contains(e.target)) closeAllDropdowns();
-  });
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const visible = Array.from(dropdown.querySelectorAll('.dropdown-item')).filter(i => i.style.display !== 'none');
-      if (visible.length) visible[0].focus();
-    }
-  });
-
-  dropdown.addEventListener('keydown', (e) => {
-    const visible = Array.from(dropdown.querySelectorAll('.dropdown-item')).filter(i => i.style.display !== 'none');
-    let idx = visible.indexOf(document.activeElement);
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      visible[(idx + 1) % visible.length].focus();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      visible[(idx - 1 + visible.length) % visible.length].focus();
-    } else if (e.key === 'Escape') {
-      closeAllDropdowns();
-      input.focus();
-    }
-  });
-}
-
-function populateCurrencyDropdowns() {
-  createDropdownItems(fromDropdown, setFromCurrency);
-  createDropdownItems(toDropdown, setToCurrency);
-  setFromCurrency('INR');
-  setToCurrency('USD');
+  fromCurrency.value = 'INR';
+  toCurrency.value = 'USD';
 }
 
 function updateConvertedAmount() {
   const amount = parseFloat(amountInput.value);
-  const from = fromCurrencyInput.value.trim().toUpperCase();
-  const to = toCurrencyInput.value.trim().toUpperCase();
-
-  if (!rates[from] || !rates[to] || isNaN(amount) || amount <= 0) {
+  if (isNaN(amount) || amount < 0) {
     convertedAmountEl.textContent = '-';
     return;
   }
 
-  const result = amount * (rates[to] / rates[from]);
-  const formatted = result.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  convertedAmountEl.textContent = `${formatted} ${to}`;
+  const fromCur = fromCurrency.value;
+  const toCur = toCurrency.value;
+
+  if (!ratesData[fromCur] || !ratesData[toCur]) {
+    convertedAmountEl.textContent = '-';
+    return;
+  }
+
+  const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
+  // Show converted amount with currency code e.g., "7 USD"
+const formatted = converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+convertedAmountEl.textContent = ${formatted} ${toCur};
 }
 
-function displayLiveRates() {
+function displayLiveRates(rates) {
   ratesContainer.innerHTML = '';
 
-  const popular = [
-    'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'INR',
+  // Popular currencies list — removing CNY and JPY, adding your requested countries
+  const popularCurrencies = [
+    'USD', 'EUR', 'GBP', /* 'JPY', */ 'AUD', 'CAD', 'CHF', /* 'CNY', */ 'INR',
     'SAR', 'QAR', 'BHD', 'OMR', 'KWD', 'THB'
   ];
 
-  popular.forEach(code => {
-    if (!rates[code]) return;
+  popularCurrencies.forEach(cur => {
+    if (!rates[cur]) return;
 
     const card = document.createElement('div');
     card.className = 'rate-card';
 
+    const flagCode = currencyToCountryCode[cur];
     const flagDiv = document.createElement('div');
-    const flagCode = currencyToCountryCode[code];
+
     if (flagCode) {
-      flagDiv.className = `fi fi-${flagCode}`;
+      flagDiv.className = fi fi-${flagCode};
     } else {
-      flagDiv.textContent = code;
+      flagDiv.textContent = cur;
       flagDiv.style.fontWeight = '700';
+      flagDiv.style.fontSize = '20px';
     }
 
-    const codeEl = document.createElement('div');
-    codeEl.className = 'currency-code';
-    codeEl.textContent = code;
+    card.appendChild(flagDiv);
 
-    const nameEl = document.createElement('div');
-    nameEl.className = 'currency-name';
-    nameEl.textContent = currencyNames[code] || 'Unknown';
+    const codeDiv = document.createElement('div');
+    codeDiv.className = 'currency-code';
+    codeDiv.textContent = cur;
+    card.appendChild(codeDiv);
 
-    const rateEl = document.createElement('div');
-    rateEl.className = 'currency-rate';
-    rateEl.textContent = `1 INR = ${rates[code].toFixed(4)}`;
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'currency-name';
+    nameDiv.textContent = currencyNames[cur] || 'Unknown Currency';
+    card.appendChild(nameDiv);
 
-    card.append(flagDiv, codeEl, nameEl, rateEl);
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      setFromCurrency('INR');
-      setToCurrency(code);
-      updateConvertedAmount();
-    });
+    const rateDiv = document.createElement('div');
+    rateDiv.className = 'currency-rate';
+    // Show rate as "1 INR = [rate]"
+    rateDiv.textContent = 1 INR = ${rates[cur].toFixed(4)};
+    card.appendChild(rateDiv);
 
     ratesContainer.appendChild(card);
+
+    // Make rate card clickable to auto-fill dropdowns
+card.style.cursor = 'pointer';
+card.addEventListener('click', () => {
+  fromCurrency.value = 'INR';
+  toCurrency.value = cur;
+  updateConvertedAmount();
+});
+
   });
 }
 
 swapBtn.addEventListener('click', () => {
-  const fromVal = fromCurrencyInput.value;
-  const toVal = toCurrencyInput.value;
-  setFromCurrency(toVal);
-  setToCurrency(fromVal);
+  const temp = fromCurrency.value;
+  fromCurrency.value = toCurrency.value;
+  toCurrency.value = temp;
+
   updateConvertedAmount();
 });
 
 amountInput.addEventListener('input', updateConvertedAmount);
-fromCurrencyInput.addEventListener('input', () => filterDropdown(fromDropdown, fromCurrencyInput.value));
-toCurrencyInput.addEventListener('input', () => filterDropdown(toDropdown, toCurrencyInput.value));
+fromCurrency.addEventListener('change', updateConvertedAmount);
+toCurrency.addEventListener('change', updateConvertedAmount);
 
-// FAQ
 const faqData = [
   {
     question: "How do I exchange currency with Apna Tours & Travels?",
@@ -237,11 +331,11 @@ const faqData = [
   },
   {
     question: "What currencies do you support?",
-    answer: "We support all major global currencies including USD, EUR, GBP, and more."
+    answer: "We support all major global currencies including USD, EUR, GBP, JPY, and many more."
   },
   {
     question: "How often are the exchange rates updated?",
-    answer: "Rates are updated hourly based on global market data. Office rates may differ."
+    answer: " Rates are updated hourly based on global market data. Actual exchange rates at our office may differ."
   },
   {
     question: "Are there any additional fees or commissions?",
@@ -249,48 +343,58 @@ const faqData = [
   },
   {
     question: "How can I contact customer support?",
-    answer: "Email us at smabidayub@gmail.com or call +91 94314 92354 during business hours."
+    answer: "You can reach us at smabidayub@gmail.com or call +91 94314 92354 during business hours."
   },
   {
     question: "Do you offer delivery services?",
-    answer: "Yes, we offer delivery in and around Patna as well as in-person service."
+    answer: "Yes, we provide both delivery within Patna and in-person services for your convenience."
   },
   {
     question: "What documents are required to exchange currency?",
-    answer: "Please carry a government-issued photo ID and PAN card. Proof of address may be needed."
+    answer: "To comply with Indian regulations, please carry a valid government-issued photo ID (such as Aadhaar card, PAN card, or Passport) along with your PAN card details for transactions above specified limits. Proof of address may also be required."
   }
 ];
 
 function renderFAQ() {
   faqList.innerHTML = '';
-  faqData.forEach(({ question, answer }) => {
-    const item = document.createElement('div');
-    item.className = 'faq-item';
 
-    const q = document.createElement('div');
-    q.className = 'faq-question';
-    q.textContent = question;
-    q.tabIndex = 0;
+  faqData.forEach((item, index) => {
+    const faqItem = document.createElement('div');
+    faqItem.className = 'faq-item';
 
-    const a = document.createElement('div');
-    a.className = 'faq-answer';
-    a.textContent = answer;
+    const question = document.createElement('div');
+    question.className = 'faq-question';
+    question.tabIndex = 0;
+    question.textContent = item.question;
+    faqItem.appendChild(question);
 
-    q.addEventListener('click', () => item.classList.toggle('open'));
-    q.addEventListener('keydown', e => {
-      if (['Enter', ' '].includes(e.key)) {
+    const answer = document.createElement('div');
+    answer.className = 'faq-answer';
+    answer.textContent = item.answer;
+    faqItem.appendChild(answer);
+
+    question.addEventListener('click', () => {
+      faqItem.classList.toggle('open');
+    });
+
+    question.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        item.classList.toggle('open');
+        faqItem.classList.toggle('open');
       }
     });
 
-    item.append(q, a);
-    faqList.appendChild(item);
+    faqList.appendChild(faqItem);
   });
 }
 
-// Init
-setupDropdown(fromCurrencyContainer, fromCurrencyInput, fromDropdown, setFromCurrency);
-setupDropdown(toCurrencyContainer, toCurrencyInput, toDropdown, setToCurrency);
+function updateCurrentYear() {
+  if (currentYearEl) {
+    currentYearEl.textContent = new Date().getFullYear();
+  }
+}
+
+// Initialization
 fetchRates();
 renderFAQ();
+updateCurrentYear();
