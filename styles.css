@@ -473,9 +473,9 @@ button:active {
 
 .footer-logo .logo-subtext {
   font-size: 0.75rem;
-  color: #f97316;
+  color: #3b82f6;
   line-height: 1rem;
-  margin-top: -6px;
+  margin-top: 4px;
 }
 
 .footer-description {
