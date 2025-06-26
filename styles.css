@@ -24,6 +24,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start; /* default top alignment */
 }
 
 /* Container for page content */
@@ -69,6 +70,7 @@ body {
   font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.25rem;
+  color: white; /* ensure visible */
 }
 
 .logo-subtext {
@@ -91,10 +93,13 @@ body {
   color: white;
   font-weight: 600;
   font-size: 1rem;
+  text-decoration: none;
+  border-bottom: none; /* remove underline */
 }
 
 .nav-links li a:hover {
   color: #60a5fa;
+  text-decoration: none;
 }
 
 /* Hero Section */
@@ -120,21 +125,23 @@ body {
 .hero-content {
   position: relative;
   z-index: 1;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-content h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 16px;
+  text-decoration: none; /* remove underline */
 }
 
 .hero-content p {
   font-size: 1.125rem;
   margin-bottom: 32px;
+  text-decoration: none; /* remove underline */
 }
-
-/* Updated to replace 'Reliable' with 'Foreign' in hero paragraph */
-/* Update your HTML accordingly */
 
 /* Buttons */
 .btn-primary {
@@ -145,25 +152,28 @@ body {
   border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
   transition: background-color 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn-primary:hover {
   background-color: #dbeafe;
+  text-decoration: none;
 }
 
 /* ------------------------ */
-/* CALCULATOR WRAPPER - boxed and centered */
+/* CALCULATOR BOXED WRAPPER */
 /* ------------------------ */
-.calculator-wrapper {
+.calculator-box {
   max-width: 480px;
-  margin: 40px auto;
+  margin: 40px auto 80px auto;
   padding: 32px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 /* Calculator container */
@@ -189,6 +199,7 @@ body {
   font-weight: 700;
   font-size: 1.125rem;
   margin-bottom: 6px;
+  user-select: none;
 }
 
 /* Search input for dropdown */
@@ -263,6 +274,7 @@ body {
   font-weight: 700;
   font-size: 1.125rem;
   margin-bottom: 6px;
+  user-select: none;
 }
 
 .amount-input input[type="number"] {
@@ -396,6 +408,7 @@ body {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
+  text-decoration: none;
 }
 
 .faq-section p {
@@ -403,6 +416,7 @@ body {
   margin: 0 auto 24px auto;
   color: #64748b;
   font-size: 1rem;
+  text-decoration: none;
 }
 
 .faq-list {
@@ -423,6 +437,7 @@ body {
   position: relative;
   padding-right: 24px;
   outline: none;
+  text-decoration: none;
 }
 
 .faq-question::after {
@@ -446,6 +461,7 @@ body {
   transition: max-height 0.4s ease;
   color: #475569;
   margin-top: 8px;
+  text-decoration: none;
 }
 
 .faq-item.open .faq-answer {
@@ -464,10 +480,12 @@ body {
   border-radius: 8px;
   font-weight: 700;
   transition: background-color 0.2s ease;
+  text-decoration: none;
 }
 
 .btn-secondary:hover {
   background-color: #2563eb;
+  text-decoration: none;
 }
 
 /* Footer */
@@ -511,6 +529,7 @@ body {
   font-size: 1.125rem;
   line-height: 1.25rem;
   color: white;
+  text-decoration: none;
 }
 
 .footer-logo .logo-subtext {
@@ -518,6 +537,7 @@ body {
   color: #3b82f6;
   line-height: 1rem;
   margin-top: 4px;
+  text-decoration: none;
 }
 
 .footer-description {
@@ -560,10 +580,13 @@ body {
 .footer-links li a {
   color: #94a3b8;
   font-weight: 400;
+  text-decoration: none;
+  border-bottom: none;
 }
 
 .footer-links li a:hover {
   color: white;
+  text-decoration: none;
 }
 
 .contact-info {
@@ -598,10 +621,13 @@ body {
 .footer-bottom a {
   color: #64748b;
   margin: 0 6px;
+  text-decoration: none;
+  border-bottom: none;
 }
 
 .footer-bottom a:hover {
   color: white;
+  text-decoration: none;
 }
 
 /* Responsive */
@@ -621,7 +647,7 @@ body {
     justify-content: center;
   }
   
-  .calculator-wrapper {
+  .calculator-box {
     margin: 20px;
     padding: 24px;
     max-width: 100%;
