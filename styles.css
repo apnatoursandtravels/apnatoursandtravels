@@ -174,47 +174,77 @@ button:active {
 
 /* Calculator Section */
 /* Calculator container flex: arrange inputs horizontally with gap */
+.calculator-box {
+  background-color: white;
+  padding: 32px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 700px;
+  margin: 40px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
 .calculator {
   display: flex;
-  flex-wrap: nowrap; /* no wrap so inputs stay in one row */
-  gap: 24px;         /* add space between inputs */
-  align-items: flex-start;
-  justify-content: center;
-}
-
-/* Each input container - set a fixed width */
-.currency-select,
-.amount-input {
-  flex: 1 1 220px;  /* allow flexible width but with min */
-  min-width: 180px;
-}
-
-/* On smaller screens, stack vertically */
-@media (max-width: 768px) {
-  .calculator {
-    flex-wrap: wrap;   /* now wrap to stack */
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  /* Make buttons and converted amount centered */
-  #swap-btn {
-    align-self: center;
-    margin: 16px 0;
-  }
-
-  .converted-result {
-    text-align: center !important;
-  }
-}
-
-/* Center the converted amount on desktop too */
-.converted-result {
-  text-align: center;
-  margin-top: 24px;
+  align-items: center;
+  gap: 24px;
   width: 100%;
 }
+
+.currency-select,
+.amount-input {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.converted-result {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* Swap button */
+#swap-btn {
+  background: var(--blue);
+  color: white;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border: none;
+  cursor: pointer;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+#swap-btn:hover {
+  background-color: #2563eb;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .calculator-box {
+    flex-direction: column;
+    padding: 24px 20px;
+    max-width: 90%;
+  }
+  .calculator {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .converted-result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.25rem;
+  }
+}
+
 
 
 /* Rates Section */
