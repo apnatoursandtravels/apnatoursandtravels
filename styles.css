@@ -175,29 +175,48 @@ button:active {
 /* Calculator Section */
 /* Calculator container flex: arrange inputs horizontally with gap */
 .calculator-box {
-  max-width: 1000px;
-  padding: 32px 32px;
+  background-color: white;
+  padding: 32px 48px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 900px; /* wider to fit inputs nicely */
+  margin: 0 auto 48px auto;
+  display: flex;
+  justify-content: center;
 }
 
 .calculator {
   display: flex;
-  gap: 16px;
+  gap: 24px; /* space between items */
   align-items: center;
   flex-wrap: nowrap;
   width: 100%;
-  max-width: 100%;
+  max-width: 860px;
 }
 
 .currency-select, .amount-input {
-  flex: 0 0 280px;
   display: flex;
   flex-direction: column;
+  flex: 1 1 0;
+  min-width: 160px; /* prevent too small */
+}
+
+.currency-select label, .amount-input label {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 6px;
 }
 
 .currency-select select, .amount-input input[type="number"] {
-  width: 100%; /* fill container */
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1.5px solid #cbd5e1;
+  appearance: none; /* remove default styling for dropdown */
+  background-color: white;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  font-family: inherit;
 }
-
 
 .currency-select select:focus, .amount-input input[type="number"]:focus {
   outline: none;
