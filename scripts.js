@@ -41,7 +41,7 @@ const currencyNames = {
   CAD: "Canadian Dollar",
   CDF: "Congolese Franc",
   CHF: "Swiss Franc",
-  // Removed CNY (Chinese Yuan)
+  CNY: "Chinese Yuan",
   CLP: "Chilean Peso",
   COP: "Colombian Peso",
   CRC: "Costa Rican Colón",
@@ -80,7 +80,7 @@ const currencyNames = {
   ISK: "Icelandic Króna",
   JMD: "Jamaican Dollar",
   JOD: "Jordanian Dinar",
-  // Removed JPY (Japanese Yen)
+  JPY: "Japanese Yen",
   KES: "Kenyan Shilling",
   KGS: "Kyrgystani Som",
   KHR: "Cambodian Riel",
@@ -212,9 +212,7 @@ function populateCurrencySelectors(rates) {
   toCurrency.innerHTML = '';
 
   // Remove CNY and JPY
-  const currencies = Object.keys(rates)
-    .filter(cur => cur !== 'CNY' && cur !== 'JPY') 
-    .sort();
+   const currencies = Object.keys(rates).sort(); 
 
   currencies.forEach(cur => {
     const name = currencyNames[cur] || 'Unknown Currency';
