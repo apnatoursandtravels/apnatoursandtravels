@@ -192,7 +192,7 @@ let ratesData = {};
 async function fetchRates() {
   try {
     const response = await fetch(API_BASE_URL);
-    if (!response.ok) throw new Error(HTTP error! Status: ${response.status});
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
     if (!data.conversion_rates) throw new Error('Invalid rates data');
 
@@ -221,12 +221,12 @@ function populateCurrencySelectors(rates) {
 
     const optionFrom = document.createElement('option');
     optionFrom.value = cur;
-    optionFrom.textContent = ${cur} - ${name};
+    optionFrom.textContent = `${cur} - ${name}`;
     fromCurrency.appendChild(optionFrom);
 
     const optionTo = document.createElement('option');
     optionTo.value = cur;
-    optionTo.textContent = ${cur} - ${name};
+    optionTo.textContent = `${cur} - ${name}`;
     toCurrency.appendChild(optionTo);
   });
 
@@ -252,7 +252,7 @@ function updateConvertedAmount() {
   const converted = amount * (ratesData[toCur] / ratesData[fromCur]);
   // Show converted amount with currency code e.g., "7 USD"
 const formatted = converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-convertedAmountEl.textContent = ${formatted} ${toCur};
+convertedAmountEl.textContent = `${formatted} ${toCur}`;
 }
 
 function displayLiveRates(rates) {
@@ -274,7 +274,7 @@ function displayLiveRates(rates) {
     const flagDiv = document.createElement('div');
 
     if (flagCode) {
-      flagDiv.className = fi fi-${flagCode};
+      flagDiv.className = `fi fi-${flagCode}`;
     } else {
       flagDiv.textContent = cur;
       flagDiv.style.fontWeight = '700';
@@ -296,7 +296,7 @@ function displayLiveRates(rates) {
     const rateDiv = document.createElement('div');
     rateDiv.className = 'currency-rate';
     // Show rate as "1 INR = [rate]"
-    rateDiv.textContent = 1 INR = ${rates[cur].toFixed(4)};
+    rateDiv.textContent = `1 INR = ${rates[cur].toFixed(4)}`;
     card.appendChild(rateDiv);
 
     ratesContainer.appendChild(card);
