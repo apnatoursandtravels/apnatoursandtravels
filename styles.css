@@ -198,7 +198,7 @@ button:active {
   display: flex;
   flex-direction: column;
   flex: 1 1 0;
-  min-width: 160px; /* prevent too small */
+  min-width: 260px; /* prevent too small */
 }
 
 .currency-select label, .amount-input label {
