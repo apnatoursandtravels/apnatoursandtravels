@@ -195,11 +195,12 @@ button:active {
 }
 
 .currency-select, .amount-input {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1 1 0;
-  min-width: 160px; /* prevent too small */
+  min-width: 300px; /* Ensures space for long names */
 }
+
 
 .currency-select label, .amount-input label {
   font-weight: 700;
@@ -226,12 +227,15 @@ button:active {
 
 /* For better dropdown arrow - keep default but consistent */
 .currency-select select {
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5'%3e%3cpath fill='%23647a9b' d='M0 0l5 5 5-5z'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=...");
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 16px center;
   background-size: 10px 5px;
-  padding-right: 36px;
+  padding: 10px 48px 10px 12px;
+  font-size: 1rem;
+  white-space: normal;
 }
+
 
 /* Swap button */
 #swap-btn {
