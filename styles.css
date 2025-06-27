@@ -179,27 +179,31 @@ button:active {
   padding: 32px 48px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  max-width: 900px; /* wider to fit inputs nicely */
+  max-width: 900px;
   margin: 0 auto 48px auto;
-  display: flex;
-  justify-content: center;
+  overflow: hidden;         /* <-- Add this */
+  box-sizing: border-box;   /* <-- Ensures proper sizing */
 }
+
 
 .calculator {
   display: flex;
-  gap: 24px; /* space between items */
+  gap: 24px;
   align-items: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; /* allow wrap on smaller screens */
   width: 100%;
   max-width: 860px;
 }
 
+
 .currency-select, .amount-input {
-  flex: 1;
+  flex: 1 1 280px; /* flex-grow, flex-shrink, flex-basis */
   display: flex;
   flex-direction: column;
-  min-width: 300px; /* Ensures space for long names */
+  min-width: 0; /* let container control actual width */
+  max-width: 100%;
 }
+
 
 
 .currency-select label, .amount-input label {
@@ -281,20 +285,41 @@ button:active {
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
   .calculator {
     flex-direction: column;
+    align-items: stretch;
     gap: 16px;
   }
 
-  #swap-btn {
-    margin: 12px 0;
+  .currency-select,
+  .amount-input {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
   }
 
-  .currency-select, .amount-input {
-    width: 100%;
-    min-width: unset;
+  .calculator-box {
+    padding: 24px;
+  }
+
+  #swap-btn {
+    align-self: center;
+    margin: 16px 0;
   }
 }
+
 
 
 
@@ -580,23 +605,3 @@ button:active {
   color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
-  .hero-content h1 {
-    font-size: 1.8rem;
-  }
-  .hero-content p {
-    font-size: 1rem;
-  }
-  .calculator {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  #swap-btn {
-    align-self: center;
-    margin: 16px 0;
-  }
-}
