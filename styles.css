@@ -173,134 +173,49 @@ button:active {
 }
 
 /* Calculator Section */
+/* Calculator container flex: arrange inputs horizontally with gap */
 .calculator {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  padding: 32px 0;
-  justify-content: center;
-}
-/* Calculator Box Wrapper */
-.calculator-box {
-  background-color: white;
-  padding: 32px 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  max-width: 680px;       /* wide enough for content */
-  margin: 0 auto 48px auto; /* center horizontally with bottom margin */
-  display: flex;
+  flex-wrap: nowrap; /* no wrap so inputs stay in one row */
+  gap: 24px;         /* add space between inputs */
+  align-items: flex-start;
   justify-content: center;
 }
 
-/* Responsive adjustment */
+/* Each input container - set a fixed width */
+.currency-select,
+.amount-input {
+  flex: 1 1 220px;  /* allow flexible width but with min */
+  min-width: 180px;
+}
+
+/* On smaller screens, stack vertically */
 @media (max-width: 768px) {
-  .calculator-box {
-    padding: 24px 20px;
-    max-width: 100%;
-    margin: 0 16px 48px 16px;
+  .calculator {
+    flex-wrap: wrap;   /* now wrap to stack */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  /* Make buttons and converted amount centered */
+  #swap-btn {
+    align-self: center;
+    margin: 16px 0;
+  }
+
+  .converted-result {
+    text-align: center !important;
   }
 }
 
-
-.currency-select {
-  display: flex;
-  flex-direction: column;
-  width: 300px; /* Increased from 180px to 240px */
-}
-
-.currency-select label {
-  font-weight: 700;
-  font-size: 1.125rem; /* Increased font size */
-  margin-bottom: 6px;
-}
-
-.currency-select select {
-  padding: 8px 12px;
-  font-size: 1.25rem;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  transition: box-shadow 0.3s ease;
-}
-
-.currency-select select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  border-color: #3b82f6;
-}
-
-.currency-select select:disabled {
-  background-color: #e5e7eb;
-  color: #64748b;
-  cursor: not-allowed;
-}
-
-.amount-input {
-  display: flex;
-  flex-direction: column;
-  width: 240px; /* Increased from 180px to 240px */
-}
-
-.amount-input label {
-  font-weight: 700;
-  font-size: 1.125rem; /* Increased font size */
-  margin-bottom: 6px;
-}
-
-.amount-input input[type="number"] {
-  padding: 8px 12px;
-  font-size: 1.25rem;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  transition: box-shadow 0.3s ease;
-}
-
-.amount-input input[type="number"]:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  border-color: #3b82f6;
-}
-
-
-#swap-btn {
-  font-size: 1.75rem;
-  background: var(--blue);
-  color: white;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-top: 24px;
-  flex-shrink: 0;
-}
-
-#swap-btn:hover {
-  background-color: #2563eb;
-}
-
+/* Center the converted amount on desktop too */
 .converted-result {
-  flex: 1 1 100%;
-  margin-top: 24px;
   text-align: center;
+  margin-top: 24px;
+  width: 100%;
 }
 
-.converted-result p:first-child {
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 1.125rem;
-  color: #64748b;
-}
-
-#converted-amount {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--blue);
-}
 
 /* Rates Section */
 #rates {
